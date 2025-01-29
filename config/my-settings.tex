@@ -1,0 +1,118 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                             %
+% MY PACKAGES, SETTINGS ETC.                  %
+%                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% List your packages, macros, and settings here for clarity and modularity.
+
+% ========================
+% Listings Package Setup
+% ========================
+\usepackage{listings}
+\usepackage{xcolor} % Required for custom colors
+
+% Define custom colors for code syntax highlighting
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.92,0.92,0.92}
+
+% Define a custom style for code listings
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\sffamily\scriptsize, % Sans-serif, small font
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                   
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+% Apply the custom style globally
+\lstset{style=mystyle}
+
+% Add support for additional keywords in C++
+\lstset{
+    morekeywords={string, exception, std, vector},
+    language=C++ % Default programming language
+}
+
+% Define a custom language for Kotlin
+\lstdefinelanguage{Kotlin}{
+  keywords={fun, if, else, return, val, var, when},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={Int, Boolean, Set},
+  ndkeywordstyle=\color{cyan}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{gray}\sffamily,
+  stringstyle=\color{red}\sffamily,
+  morestring=[b]",
+  morestring=[b]'
+}
+
+% ========================
+% SVG Package Setup
+% ========================
+\usepackage{svg}
+\svgsetup{inkscapelatex=false} % Disable Inkscape LaTeX support by default
+\svgsetup{inkscapeexe=inkscape}
+
+% ========================
+% TikZ Library Setup
+% ========================
+\usetikzlibrary{arrows.meta, positioning} % Add TikZ libraries for diagrams
+
+\newcounter{listingcounter} % Initialize the listing counter
+\newcommand{\codelistentry}[3]{%
+    \refstepcounter{listingcounter}% Update the counter
+    \par\noindent\textbf{Pseudocode Listing \thelistingcounter:} \textit{#2} \hfill Page \pageref{#1}\par
+}
+\newcommand{\addcodelistentry}[1]{%
+    \refstepcounter{listingcounter}% Update the counter
+    \label{#1}
+}
+\newcommand{\listoflistings}{%
+    \setcounter{listingcounter}{-17} % Reset counter before printing the list
+    \begin{flushleft}
+        % Print all listings
+        \foreach \listing in {list-of-your-labels}{
+            \codelistentry{\listing}{Description of the listing}{}
+        }
+    \end{flushleft}
+}
+
+
+% ========================
+% Minted Package (Optional)
+% ========================
+% Uncomment the following lines to use the minted package instead of listings.
+% Requires compiling with the -shell-escape option.
+
+% \usepackage{minted}
+% \setminted{
+%     fontsize=\small, % Font size for code
+%     frame=lines, % Add a frame around code
+%     framesep=2mm, % Padding between frame and code
+%     tabsize=3, % Tab width
+%     numbers=left, % Line numbers on the left
+%     numbersep=5pt, % Spacing between numbers and code
+%     breaklines=true, % Allow line breaks in code
+%     escapeinside=@@, % Escape commands for LaTeX inside code
+% }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END OF MY PACKAGES, MACROS, AND SETTINGS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

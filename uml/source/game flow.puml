@@ -1,0 +1,62 @@
+@startuml game_flow
+
+skinparam sequenceMessageAlign center
+skinparam ParticipantPadding 20
+
+actor Player
+participant "GameScreen" as Game
+participant "GameViewModel" as GameVM
+participant "DiceManager" as DiceM
+participant "GameManager" as GameM
+participant "StatisticsManager" as Stats
+participant "ShakeDetectionManager" as ShakeM
+
+activate Game
+Game -> GameVM: Initialize Game
+GameVM -> Stats: startGameTiming()
+GameVM -> GameM: initializeGame()
+GameM --> GameVM: Initial GameState
+GameVM -> ShakeM: resumeShakeDetection()
+
+loop Game Round
+    alt Shake to Roll
+        ShakeM -> GameVM: onShake()
+        GameVM -> DiceM: rollDice()
+    else Manual Roll
+        Player -> Game: Tap Roll Button
+        Game -> GameVM: rollDice()
+        GameVM -> DiceM: rollDice()
+    end
+
+    DiceM --> GameVM: Dice Results
+    GameVM -> GameM: handleTurn(results)
+    GameM --> GameVM: Updated GameState
+    GameVM --> Game: Update UI
+
+    alt Player Holds Dice
+        Player -> Game: Toggle Dice Hold
+        Game -> GameVM: toggleDiceHold()
+        GameVM -> DiceM: toggleHold()
+    else Player Banks
+        Player -> Game: Bank Points
+        Game -> GameVM: bankScore()
+        GameVM -> GameM: bankScore()
+        GameM --> GameVM: Updated GameState
+        GameVM -> Stats: trackBanking()
+    end
+end
+
+alt Win Condition Met
+    GameVM -> GameVM: handleGameEnd()
+    GameVM -> Stats: updateGameStatistics()
+    GameVM -> Game: Show Win Dialog
+    Game --> Player: Display Results
+else Player Exits
+    Player -> Game: Exit Game
+    Game -> Stats: Save Progress
+    Game -> ShakeM: pauseShakeDetection()
+end
+
+deactivate Game
+
+@enduml

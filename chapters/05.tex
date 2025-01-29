@@ -1,0 +1,242 @@
+\chapter{Internal Specification}
+
+This chapter provides a detailed overview of the application's internal workings. It covers the system's concept, architecture, data structures, components, algorithms, design patterns, and relevant UML diagrams.
+
+\section{System Architecture}
+
+The project's architecture follows the modern Model-View-ViewModel (MVVM) pattern, adhering to Clean Architecture principles. This separation of concerns allows for better maintainability and testability of the code.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/mvvm_explanation.png}
+    \caption{High Level MVVM Architecture.}
+    \label{fig:mvvm_explanation}
+\end{figure}
+
+As illustrated in Figure \ref{fig:mvvm_explanation}, the application is structured into several layers:
+
+\begin{itemize}
+    \item \textbf{Application Layer}: Contains the main application logic and navigation.
+    \item \textbf{UI Layer}: Responsible for the user interface components, including screens and themes. This layer corresponds to the "View" component of the MVVM pattern.
+    \item \textbf{ViewModel Layer}: Manages the data and business logic, providing a bridge between the UI and the Model. This layer corresponds to the "ViewModel" component of the MVVM pattern.
+    \item \textbf{Manager Layer}: Handles specific game logic and state management. This layer sits below the view model, and contains the logic for manipulating the models.
+    \item \textbf{Repository Layer}: Manages data access and interactions with external sources. This layer is the gatekeeper for the model layer, accessing and manipulating the models before passing it to the application layer.
+    \item \textbf{Model Layer}: Represents the data and domain logic of the application. This layer contains the data entities and business rules. This layer corresponds to the "Model" component of the MVVM pattern.
+\end{itemize}
+
+\section{Data Structures and Data Management}
+
+The application utilizes a variety of data structures to effectively manage game state, user profiles, and game data. These structures are designed for efficiency and scalability, supporting the diverse features of the game. Data persistence is achieved using DataStore, a modern data storage solution, and dependency injection is managed using Dagger Hilt.
+
+\subsection{Data Models}
+
+The application's data is represented using models located in the `models` directory. These models encompass different aspects of the game, including game state, user data, and results from the image detection mechanisms.
+
+\subsubsection{Game Models}
+
+The core game models are:
+\begin{itemize}
+    \item \textbf{GameStatistics}: Tracks overall game performance metrics for each user across all games. These metrics include total games played, win rates, average scores, and other relevant data.
+    \item \textbf{GameScoreState}: Holds the current score and state of the game during an individual game session, including the score for each player and the game's current turn.
+     \item \textbf{DecisionPatterns}: Captures the different decision-making patterns of a player in each game, including when the player decides to hold dice, or when they decide to roll or bank scores. This is used to calculate statistics about how players are playing the game.
+    \item \textbf{WinRate}: Calculates and stores the win rate of a player. This will be used in \textit{PlayerAnalysis}.
+    \item \textbf{TimeMetrics}: Stores metrics about how long a player played the game, including the amount of time a player has spent playing each game, and the time spent per round. This is used in \textit{PlayerAnalysis}.
+    \item \textbf{PlayerAnalysis}: Provides detailed analysis of a player's behavior and performance trends, combining data from various sources like `WinRate`, `TimeMetrics`, and `DecisionPatterns`. It tracks trends over time, identify strong and weak areas of a player, and provides an overall evaluation of a player's performance.
+\end{itemize}
+
+\subsubsection{Detection Models}
+
+The detection models, located in the `detection` subdirectory of `models`, are:
+
+\begin{itemize}
+    \item \textbf{DiceDetectionResult}: Captures results from dice detection processes, including the number detected and the number on each die.
+    \item \textbf{Detection}: Represents the state of the detection model.
+    \item \textbf{DetectionRequest}: Represents the request to start the detection.
+    \item \textbf{DetectionResponse}: Represents the response from the detection.
+    \item \textbf{ImageInfo}: Holds the information of the image used for detection.
+    \item \textbf{Prediction}: Represents a single prediction from the detection model.
+\end{itemize}
+
+\subsection{Data Management}
+
+The application uses a modern and efficient approach to data management, leveraging DataStore for persistent storage and Dagger Hilt for dependency injection.
+
+\subsubsection{Persistent Storage}
+
+DataStore provides a robust, asynchronous solution for managing the application's persistent data. Unlike traditional databases, DataStore offers type safety and a reactive approach, ensuring smooth and efficient data handling for user preferences, game statistics, and other relevant application data. This approach helps the application to provide quick access to stored data and avoids some of the limitations of other persistent storage options.
+
+\subsubsection{Dependency Injection}
+Dagger Hilt simplifies the management of dependencies by providing a standardized way to inject components into the application. This improves code modularity, making the app easier to test, maintain, and scale. Dagger Hilt helps manage the dependencies between classes and is used to ensure all modules are configured correctly, and this creates a more efficient way to manage the dependencies of the application, while also making testing easier.
+
+\section{Components, Modules, and Classes}
+
+This section outlines the core components, modules, and classes that form the foundation of the application. It provides a summary of essential classes, detailing their roles and responsibilities.
+
+\subsection{Application Classes}
+The main classes of the application can be categorized into Main Application Classes, ViewModels, and Managers.
+\subsubsection{Main Application Classes}
+\begin{itemize}
+    \item \textbf{KaviApplication}: The main class that extends Android's Application class, responsible for initializing the application, and important libraries like Timber for debugging.
+    \item \textbf{MainActivity}: The main entry point for the application, sets up the primary UI, and manages navigation.
+\end{itemize}
+
+\subsubsection{ViewModels}
+\begin{itemize}
+  \item \textbf{AppViewModel}: Manages application-wide data and state, coordinating between different parts of the application.
+    \item \textbf{GameViewModel}: Manages data and logic specific to each game, providing a bridge between the view and the data and state.
+      \item \textbf{DetectionViewModel}: Manages the state and logic of the image detection process, and exposes this data to the UI layer.
+\end{itemize}
+
+\subsubsection{Managers}
+\begin{itemize}
+    \item \textbf{MyGameManager}: Handles the state management and the logic of the custom game board.
+    \item \textbf{PigGameManager}: Manages the game state, rules, and scoring for the Pig game.
+     \item \textbf{GreedGameManager}: Manages the game state, rules, and scoring for the Greed game.
+    \item \textbf{BalutGameManager}: Manages the game state, rules, and scoring for the Balut game.
+     \item \textbf{DiceManager}: Manages the various aspects of rolling the dice, and its state.
+    \item \textbf{DataStoreManager}: Manages the saving and retrieval of data from the DataStore.
+     \item \textbf{StatisticsManager}: Manages the collection and processing of game statistics.
+    \item \textbf{SettingsManager}: Manages the saving and loading of the application's settings.
+     \item \textbf{ShakeDetectorManager}: Manages the logic of the shake gesture.
+\end{itemize}
+
+\vspace{0.2cm}
+A detailed Class diagram is included in the UML diagram provided in section \ref{sec:uml}.
+
+\section{Algorithms and Implementations}
+
+The application implements several sophisticated algorithms to provide an engaging and intelligent gaming experience. 
+
+\subsection{Image Processing Pipeline}
+
+The dice recognition system uses a sequence of image processing steps implemented in `RoboflowRepositoryImpl`, a class responsible for handling communication with the Roboflow API:
+\subsubsection{Preprocessing}
+    \begin{itemize}
+        \item RGB conversion using `ensureRGBFormat()` to guarantee that the image is in the correct format for processing.
+        \item Contrast enhancement through `enhanceContrast()` using histogram-based normalization to make the dice pips more clear.
+        \item Aspect ratio scaling via `scaleWithAspectRatio()` to make sure that the images are of the correct size.
+        \item Noise reduction with `reduceNoise()` to reduce the noise in the image.
+    \end{itemize}
+\subsubsection{Detection}
+    \begin{itemize}
+        \item API integration with Roboflow service using the `RoboflowClient`, which makes a call to the Roboflow API and gets the result.
+        \item Confidence filtering (threshold: 40\%) which removes detections with less than 40\% confidence to avoid erroneous detections.
+        \item Non-maximum suppression, performed by using a library for detection, which removes overlapping bounding boxes, by selecting the bounding boxes with the highest score and removing those that are overlapping.
+    \end{itemize}
+
+\subsection{AI Strategy System}
+
+The AI decision-making system, which is responsible for the decision-making process of the AI, is implemented across multiple manager classes. The game strategy, where the managers will choose the optimal next move for the AI, is done with the following methods:
+\begin{itemize}
+   \item  \textit{`shouldAIBank()`} decides when to bank points for the AI, by calculating the odds of loosing points, versus obtaining more points.
+    \item \textit{`chooseAICategory()`} selects optimal scoring categories for the Balut AI, based on the dice that are currently being held.
+\end{itemize}
+
+\subsection{Statistics System}
+The statistics tracking system, which is used for analyzing and processing user data, is centralized in `StatisticsManager`:
+
+\subsubsection{Game Analytics}
+    \begin{itemize}
+        \item \textit{`updateGameStatistics()`} records game outcomes for the players, and saves it to the `GameStatistics` model.
+        \item \textit{`updateTimeMetrics()`} tracks timing data, including the time spent in each round, and the total time spent in a game.
+        \item \textit{`updatePerformanceMetrics()`} calculates improvement rates, by keeping track of how many games the player wins, and their high scores.
+    \end{itemize}
+
+\subsubsection{Achievement Processing}
+The achievement processing is responsible for monitoring and managing user progress toward unlocking achievements in the application. The following key functions are implemented:
+    \begin{itemize}
+        \item \textit{`calculateAchievements()`}: Evaluates the unlock conditions for all achievements available in the application and updates their status based on the latest user activity and metrics.
+        \item \textit{`updateProgressMetrics()`}: Tracks progress toward achievement goals by calculating how close the user is to meeting the requirements for unlocking various achievements.
+    \end{itemize}
+    
+\section{Applied Design Patterns}
+
+This application uses several design patterns to enhance code organization and maintainability:
+
+\begin{itemize}
+    \item \textbf{Observer Pattern}: Used in the ViewModel layer with Kotlin Flow (StateFlow) to manage and notify the UI of data changes, ensuring a reactive user interface. This allows the UI to update automatically when the state of the application changes. Examples include dice state updates, game statistics updates, and detection results.
+    
+    \item \textbf{Singleton Pattern}: Employed for managing shared resources using Dagger Hilt's dependency injection. This avoids the need to manually create singletons. Key singletons include the `StatisticsManager` for collecting and managing game analytics, the `GameTracker` for monitoring gameplay sessions, and the `DataStoreManager` for providing access to persistent storage.
+
+    \item \textbf{Factory Pattern}: Implemented using Dagger Hilt's module system to dynamically provide `GameManager` instances (such as `PigGameManager`, `GreedGameManager`, `BalutGameManager`) based on the selected game mode. This approach abstracts object creation by separating the responsibility of object creation from the main code logic and creating the instances of the game managers on the go, without having to specify which instance to create, promoting flexibility and scalability in managing different game variants.
+\end{itemize}
+
+\section{UML Diagrams}
+\label{sec:uml}
+
+This section presents the UML diagrams that illustrate the architecture and dynamic interactions within the application.
+
+\subsection{Class Diagram}
+The class diagram provides a detailed view of the static structure of the application, illustrating the key classes, their attributes, methods, and interconnections. It serves as a blueprint for understanding how the application components are organized and how they interact with one another.
+
+\begin{figure}[h]
+    \centering
+    \includesvg[width=1.0\textwidth]{uml/render/class_diagram.svg}
+    \caption{Class Diagram of the Application}
+    \label{fig:class_diagram}
+\end{figure}
+\vspace{-0.5cm}
+
+\subsection{Models Diagram}
+The models diagram provides a representation of the data structure of the application, illustrating the relationship between the different data models, and the different attributes associated with each one.
+
+\begin{figure}[h]
+    \centering
+    \includesvg[width=1.0\textwidth]{uml/render/models_diagram.svg}
+    \caption{Models Diagram of the Application}
+    \label{fig:models_diagram}
+\end{figure}
+\vspace{-0.5cm}
+
+\subsection{Structure Diagram}
+
+The structure diagram gives a high-level representation of the application's package organization, highlighting its modular design and the relationships between various components. This diagram helps in understanding the logical grouping and dependencies within the system.
+\begin{figure}[ht!]
+    \centering
+    \includesvg[width=1.0\textwidth]{uml/render/package_structure.svg}
+    \caption{Package Structure of the Application}
+    \label{fig:package_structure}
+\end{figure}
+
+\section{Sequence Diagrams}
+
+Sequence diagrams are used to illustrate the dynamic interactions between various components and objects within the game. They provide a clear visualization of the message flow and the sequence of operations in key scenarios. In this section, we present sequence diagrams that depict the game flow, virtual mode flow, and analysis flow within the application.
+
+\subsection{Game Flow Sequence}
+
+The game flow sequence illustrates how different components interact during a typical game session. Figure \ref{fig:game_flow} shows the process starting from the player initiating a game to the end of the game.
+
+\begin{figure}[ht!]
+    \centering
+    \includesvg[width=1.0\textwidth]{uml/render/game_flow.svg}
+    \caption{Game Flow Sequence in the Application}
+    \label{fig:game_flow}
+\end{figure}
+
+% The process begins when the player initiates the game through the `GameScreen`. The `GameScreen` then initiates the `GameViewModel`, which starts the game through the `GameManager`, and begins a timer using the `StatisticsManager`, while also setting up a shake detection manager with the `ShakeDetectionManager`. During gameplay, the player will interact with the `GameScreen` to either roll the dice using a shake or a manual roll, toggle the held dice, or bank their score. These user actions are propagated to the `GameViewModel`, which manipulates the different managers accordingly. At the end of the game the results are shown to the player and the statistics are updated through the `StatisticsManager`. The game flow will end if the player exits the game, or if they win.
+
+\subsection{Virtual Mode Sequence}
+
+The virtual mode sequence, depicted in Figure \ref{fig:virtual_mode_flow}, demonstrates how the application manages the image capture and dice detection within the virtual mode.
+
+\begin{figure}[ht!]
+    \centering
+    \includesvg[width=1.0\textwidth]{uml/render/virtual_mode_flow.svg}
+    \caption{Virtual mode Sequence in the Application}
+    \label{fig:virtual_mode_flow}
+\end{figure}
+
+% In the virtual mode, the `VirtualModeScreen` initializes a camera preview using a `CameraPreview` class. The player then taps the capture button, which initiates the image capture process. The captured image is passed to the `DetectionViewModel`, which sets its internal state to processing. The `DetectionViewModel` then calls the `RoboflowRepository` which handles all the detection requests, by preprocessing the images, calling the `RoboflowService`, and mapping the result to the `DetectionViewModel`. The `DetectionViewModel` sets its internal state based on the received information, and updates the `VirtualModeScreen` to draw bounding boxes on the screen. The process is repeated if the player retakes the image.
+
+\subsection{Analytics Flow Sequence}
+
+The analytics flow, shown in Figure \ref{fig:analysis_flow}, illustrates the steps involved in retrieving and displaying user statistics and analytics.
+
+\begin{figure}[ht!]
+    \centering
+    \includesvg[width=1.0\textwidth]{uml/render/analysis_flow.svg}
+    \caption{Analysis Flow Sequence in the Application}
+    \label{fig:analysis_flow}
+\end{figure}
+
+% When the player opens the `StatisticsScreen`, the `AnalyticsDashboard` is initialized. The `AnalyticsDashboard` then collects the `gameStatistics` from the `StatisticsManager`, which uses the `DataStore` to load the stored statistics. The `StatisticsManager` then calculates various metrics, and updates the `AnalyticsDashboard` with the latest information. The player can also view detailed metrics on the `AnalyticsDashboard`. If the player chooses to clear the statistics, then the `StatisticsManager` will use the `DataStore` and the `StatisticsRepository` to reset the stored data.

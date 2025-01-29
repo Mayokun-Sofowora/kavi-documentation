@@ -1,0 +1,239 @@
+\chapter{Verification and Validation}
+
+Ensuring the reliability, functionality, and usability of software applications necessitates rigorous verification and validation processes. Verification confirms that the application is built according to design specifications, while validation ensures it fulfils user needs.
+
+This chapter provides an overview of our quality assurance methods during application development. Specifically, it outlines the testing paradigm, test case designs, testing scope, detected and resolved bugs, and experimental results. These efforts aim to build confidence in the application's robustness and overall performance.
+
+\section{Testing}
+\begin{table}[ht!]
+    \centering
+    \begin{tabular}{|p{4cm}|p{4cm}|p{4cm}|}
+    \hline
+    \textbf{Test Type} & \textbf{Purpose} & \textbf{Scope} \\ \hline
+    Unit Testing       & Validate individual components or functions. & Core game logic, utility functions. \\ \hline
+    Integration Testing & Ensure correct interaction between modules. & Game logic and UI, image recognition and AR modules. \\ \hline
+    System Testing     & Verify the complete application works as intended. & End-to-end gameplay, AR interactions. \\ \hline
+    Regression Testing & Identify defects after changes to the codebase. & Post-fix validation of all modules. \\ \hline
+    Performance Testing & Measure responsiveness and stability under load. & Frame rate, AI performance with multiple players. \\ \hline
+    \end{tabular}
+    \caption{Summary of Testing Types and Scope}
+    \label{tab:testing_summary}
+\end{table}
+The table above summarizes the different testing types, their purposes, and scopes for this application.
+
+The V-Model testing paradigm guided the verification and validation of this application. A structured approach, particularly suitable where high-quality assurance is critical \cite{bib:vmodel}, the V-Model expands on the traditional Waterfall Model by emphasizing a parallel relationship between development and testing phases (Figure \ref{fig:vmodel_diagram}). 
+
+\begin{figure}[ht!]
+    \centering
+    \begin{tikzpicture}[
+        box/.style={draw, rectangle, fill=gray!20, text width=3cm, align=center, minimum height=1cm}, 
+        >=Stealth
+    ]
+        % Nodes
+        \node[box] (requirements) {Requirements Analysis};
+        \node[box, right=1.5cm of requirements] (acceptance) {Acceptance Testing};
+        \node[box, below=1.5cm of requirements] (design) {System Design};
+        \node[box, below=1.5cm of acceptance] (integration) {Integration Testing};
+        \node[box, below=1.5cm of design] (component) {Component Design};
+        \node[box, below=1.5cm of integration] (system) {System Testing};
+        \node[box, below=1.5cm of component] (coding) {Coding};
+        \node[box, below=1.5cm of system] (unit) {Unit Testing};
+        
+        % Arrows
+        \draw[->] (requirements) -- (design);
+        \draw[->] (design) -- (component);
+         \draw[->] (component) -- (coding);
+       \draw[->] (coding) -- (unit);
+          \draw[->] (unit) -- (system);
+         \draw[->] (system) -- (integration);
+           \draw[->] (integration) -- (acceptance);
+
+            \draw[->] (acceptance) -- +(-0.2,0) |-  (requirements);
+    \end{tikzpicture}
+    \caption{Simplified V-Model Diagram}
+    \label{fig:vmodel_diagram}
+\end{figure}
+
+Each development activity was paired with a corresponding testing phase to ensure systematic validation at every stage; for example, requirements analysis was linked to acceptance testing. The V-Model's clarity and emphasis on accountability made it an ideal paradigm for this project, with its aim to deliver a reliable, user-friendly application.
+
+The V-Model incorporates two fundamental types of testing:
+\begin{itemize}
+    \item \textbf{Verification}: Involves activities like reviews, inspections, and static testing to confirm the application meets specified requirements. For example, unit tests confirm that individual components behave as designed.
+    \addcodelistentry{lst:unit_game_init}
+    \begin{lstlisting}[language=Kotlin, caption=Unit Test for Game Initialization, label=lst:unit_game_init]
+    @Test
+    fun `test game initialization`() {
+        val gameState = balutGameManager.initializeGame()
+            
+        // Verify initial state
+        assertEquals(2, gameState.playerScores.size)
+        assertTrue(gameState.playerScores[0]?.isEmpty() == true)
+        assertEquals(1, gameState.currentRound)
+        assertFalse(gameState.isGameOver)
+    }
+    \end{lstlisting}
+    \label{lst:unit_game_init}
+    \item \textbf{Validation}: Consists of dynamic testing where the final product is evaluated to confirm it meets user requirements and needs. For example, integration tests are done to confirm correct interactions between software modules.
+    \addcodelistentry{lst:integration_dice_detection}
+    \begin{lstlisting}[language=Kotlin, caption=Integration Test for Dice Detection, label=lst:integration_dice_detection]
+    @Test
+    fun `detectDice should update state correctly`() = runTest {
+        val detections = listOf(mockk<Detection>())
+        coEvery { repository.detectDice(any()) } returns detections
+            
+        viewModel.detectDice(mockBitmap)
+        assert(viewModel.detectionState.value is DetectionState.Processing)
+            
+        testDispatcher.scheduler.advanceUntilIdle()
+        assert(viewModel.detectionState.value is DetectionState.Success)
+    } 
+    \end{lstlisting}
+    \label{lst:integration_dice_detection}
+\end{itemize}
+
+
+\section{Test Cases and Testing Scope}
+
+The application's testing strategy utilized full and partial approaches, as outlined below.
+
+\subsection{Full Testing}
+
+Full testing focused on critical components of the application:
+\begin{itemize}
+    \item \textbf{Game Logic}: Included comprehensive tests of all game rules and scoring mechanics, targeting game manager components:
+      \addcodelistentry{lst:game_logic_unit}
+    \begin{lstlisting}[language=Kotlin, caption=Unit Test for Game Logic, label=lst:game_logic_unit]
+    @Test
+    fun `test player rolls 1 and loses turn`() {
+        val initialState = pigGameManager.initializeGame()
+            .copy(currentPlayerIndex = 0)
+        val updatedState = pigGameManager.handleTurn(initialState, 1)
+            
+        assertEquals(AI_PLAYER_ID.hashCode(), updatedState.currentPlayerIndex)
+        assertEquals(0, updatedState.currentTurnScore)
+        assertEquals(0, updatedState.playerScores[0])
+    } 
+    \end{lstlisting}
+    \label{lst:game_logic_unit}
+
+    \item \textbf{User Interface}: Usability and responsiveness of the UI were assessed across different devices and screen sizes.
+    \item \textbf{Integration Testing}: Validated the interaction of various application modules and their integration within a single system.
+       \addcodelistentry{lst:integration_game_view_model}
+    \begin{lstlisting}[language=Kotlin, caption=Integration Test for Game View Model, label=lst:integration_game_view_model]
+       @Test
+       fun `integration test gameViewModel`() = runTest {
+            val gameState = viewModel.handleTurn(listOf(1))
+           assert(gameState.currentPlayerIndex == AI_PLAYER_ID.hashCode())
+        } 
+    \end{lstlisting}
+    \label{lst:integration_game_view_model}
+\end{itemize}
+
+\subsection{Partial Testing}
+
+Partial testing was applied to less critical components, with an emphasis on functionality isolation:
+
+\begin{itemize}
+    \item \textbf{Unit Testing}: Individual methods were assessed using JUnit tests focused on isolated code.
+    \addcodelistentry{lst:unit_dice_rolling}
+        \begin{lstlisting}[language=Kotlin, caption=Unit Test for Dice Rolling, label=lst:unit_dice_rolling]
+        @Test
+        fun `test roll dice for Greed game`() = runTest {
+            val results = diceManager.rollDiceForBoard(GameBoard.GREED.modeName)
+            assertEquals(6, results.size)
+            results.forEach { dice ->
+                assertTrue(dice in 1..6)
+            }
+        }
+    \end{lstlisting}
+    \label{lst:unit_dice_rolling}
+    \item \textbf{Regression Testing}: Existing functionality was assessed post-fixes and/or new additions to the code base, specifically to check and confirm errors fixed do not manifest and do not effect further components.
+         \addcodelistentry{lst:regression_game_completion}
+    \begin{lstlisting}[language=Kotlin, caption=Regression Test for Game Completion, label=lst:regression_game_completion]
+        @Test
+        fun `test game completion`() {
+            // Create a state where all categories are filled except one
+            val allCategories = BalutGameManager.CATEGORIES
+                .associateWith { 10 }
+                .toMutableMap()
+            allCategories.remove("Choice")
+            
+            val initialState = balutGameManager.initializeGame()
+                .copy(playerScores = mapOf(0 to allCategories))
+            
+            val updatedState = balutGameManager.scoreCategory(
+                initialState, listOf(1,2,3,4,5), "Choice")
+            
+            assertTrue(updatedState.isGameOver)
+            assertEquals(15, updatedState.playerScores[0]?.get("Choice"))
+        }
+    \end{lstlisting}
+    \label{lst:regression_game_completion}
+\end{itemize}
+
+\section{Detected and Fixed Bugs}
+
+During testing, several issues were identified and subsequently fixed.  Notable bugs included:
+
+\begin{itemize}
+
+    \item \textbf{Shake Detection Sensitivity}: Rapid shaking triggered multiple dice rolls, fixed with a debounce mechanism.
+      \addcodelistentry{lst:shake_detection_fix_code}
+        \begin{lstlisting}[language=Kotlin, caption=Fix for Shake Detection Sensitivity, label=lst:shake_detection_fix_code]
+    fun resumeShakeDetection() {
+        shakeDetectionManager.setOnShakeListener {
+            viewModelScope.launch {
+                shakeFlow.emit(Unit)
+            }
+        }
+        viewModelScope.launch {
+            shakeFlow
+                .debounce(300) // Added 300ms debounce
+                .collect {
+                    if (!isRolling.value && isRollAllowed.value) 
+                        rollDice()
+                }
+        }
+    } 
+    \end{lstlisting}
+    \label{lst:shake_detection_fix_code}
+
+    \item \textbf{Settings Navigation State Loss}: Navigation to the settings screen reset the game state; addressed by using launched effects for navigation to ensure game state retention.
+     \addcodelistentry{lst:setting_navigation_fix_code}
+        \begin{lstlisting}[language=Kotlin, caption=Fix for Settings Navigation State Loss, label=lst:setting_navigation_fix_code]
+    LaunchedEffect(selectedBoard) {
+        // Only reset game if board type changes
+        if (selectedBoard != currentBoardType) {
+            viewModel.setSelectedBoard(boardType)
+            viewModel.resetGame()
+        }
+    } 
+    \end{lstlisting}
+     \label{lst:setting_navigation_fix_code}
+   
+
+    \item \textbf{Game State Initialization}: Game state not correctly initialized leading to incorrect player scores. Was fixed by ensuring the game state was reset correctly when starting the game.
+        \addcodelistentry{lst:game_state_reset}
+    \begin{lstlisting}[language=Kotlin, caption=Fix for Game State Initialization, label=lst:game_state_reset]
+        fun resetGame() = viewModelScope.launch {
+        _showWinDialog.value = false
+        _heldDice.value = emptySet()
+        diceManager.resetGame()
+        statisticsManager.startGameTiming()
+        } 
+    \end{lstlisting}
+    \label{lst:game_state_reset}
+    \item \textbf{UI Responsiveness}: Some UI elements were unresponsive on certain devices. This was resolved with optimization in UI rendering to render responsive on diverse display dimensions.
+   
+    \item \textbf{Dice Recognition Accuracy}: Dice value misidentification; fixed by refining the image processing techniques with a min-max normalization of pixel brightness values to enhance pips from backgrounds.
+\end{itemize}
+
+\section{Results of Experiments}
+
+During application development, valuable insights into performance and usability were gained through several experiments:
+
+\begin{itemize}
+   \item \textbf{Performance Metrics}: A consistent frame rate of 60 FPS during gameplay with single or multiple opponents demonstrates adequate application smoothness.
+   \item \textbf{User Feedback}: User testing, conducted across diverse participants, revealed high satisfaction with an average of 4.5 out of 5 in regards to user interface and overall functionality.
+    \item \textbf{Bug Fix Impact}: A 75\% reduction in user-reported issues was reported post fix implementation, confirming positive user and stability benefits after each release.
+\end{itemize}

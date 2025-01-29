@@ -1,0 +1,71 @@
+{
+  "cSpell.language": "en-GB,pl",
+  "latex-workshop.latex.tools": [
+    {
+      "name": "pdflatex_escape",
+      "command": "pdflatex",
+      "args": [
+        "-shell-escape",
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "bibtex",
+      "command": "bibtex",
+      "args": ["%DOCFILE%"],
+      "env": {}
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "Build thesis",
+      "tools": [
+        "pdflatex_escape",
+        "bibtex",
+        "pdflatex_escape",
+        "pdflatex_escape"
+      ]
+    }
+  ],
+  "ltex.language": "en-GB",
+  "ltex.additionalRules.motherTongue": "pl-PL",
+  "cSpell.words": [
+    "Balut",
+    "Biber",
+    "CLAHE",
+    "endignore",
+    "inkscapelatex",
+    "Leaderboard",
+    "MVVM"
+  ],
+
+  "latex-workshop.latex.clean.fileTypes": [
+    "*.aux",
+    "*.bbl",
+    "*.blg",
+    "*.idx",
+    "*.ind",
+    "*.lof",
+    "*.lot",
+    "*.out",
+    "*.toc",
+    "*.acn",
+    "*.acr",
+    "*.alg",
+    "*.glg",
+    "*.glo",
+    "*.gls",
+    "*.fls",
+    "*.log",
+    "*.fdb_latexmk",
+    "*.snm",
+    "*.synctex.gz",
+    "*.nav"
+  ],
+  "latex-workshop.latex.clean.onFailBuild": true,
+  "latex-workshop.latex.clean.onSave": true
+}

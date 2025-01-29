@@ -1,0 +1,549 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{none/global//global/global/global}
+  \entry{bib:appannie}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=AA}{%
+         family={Annie},
+         familyi={A\bibinitperiod},
+         given={App},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{AA1}
+    \strng{fullhash}{AA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{The State of Mobile 2021}
+    \verb{url}
+    \verb https://www.slideshare.net/slideshow/app-annie-the-state-of-mobile-20
+    \verb 21/241508622/
+    \endverb
+    \field{year}{2021}
+    \field{urlday}{05}
+    \field{urlmonth}{01}
+    \field{urlyear}{2025}
+  \endentry
+
+  \entry{bib:yannakakis}{book}{}{}
+    \name{author}{2}{}{%
+      {{hash=YGN}{%
+         family={Yannakakis},
+         familyi={Y\bibinitperiod},
+         given={Georgios\bibnamedelima N.},
+         giveni={G\bibinitperiod\bibinitdelim N\bibinitperiod},
+      }}%
+      {{hash=TJ}{%
+         family={Togelius},
+         familyi={T\bibinitperiod},
+         given={Julian},
+         giveni={J\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{YGNTJ1}
+    \strng{fullhash}{YGNTJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{isbn}{978-3-319-63519-4}
+    \field{title}{Artificial Intelligence and Games}
+    \list{location}{1}{%
+      {Switzerland}%
+    }
+    \field{year}{2018}
+  \endentry
+
+  \entry{bib:kavidataset}{misc}{}{}
+    \name{author}{1}{}{%
+      {{hash=DD}{%
+         family={Detection},
+         familyi={D\bibinitperiod},
+         given={Dice},
+         giveni={D\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Roboflow}%
+    }
+    \strng{namehash}{DD1}
+    \strng{fullhash}{DD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+  \field{howpublished}{\url{https://universe.roboflow.com/dice-detection/kavi-zbra1}}
+    \field{note}{Available on Roboflow Universe}
+    \field{title}{Kavi Dataset}
+    \field{year}{2025}
+  \endentry
+
+  \entry{bib:D3-Dice}{misc}{}{}
+    \name{author}{1}{}{%
+      {{hash=MH}{%
+         family={Munshi},
+         familyi={M\bibinitperiod},
+         given={Harsh},
+         giveni={H\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {GitHub}%
+    }
+    \strng{namehash}{MH1}
+    \strng{fullhash}{MH1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+  \field{howpublished}{\url{https://github.com/harshmunshi/D3-Deep-Dice-Detector}}
+    \field{title}{D3 Deep Dice Detector}
+    \field{journaltitle}{GitHub repository}
+    \field{year}{2018}
+  \endentry
+
+  \entry{bib:roboflow}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=R}{%
+         family={Roboflow},
+         familyi={R\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{R1}
+    \strng{fullhash}{R1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Roboflow}
+    \verb{url}
+    \verb https://docs.roboflow.com/
+    \endverb
+    \field{urlday}{15}
+    \field{urlmonth}{01}
+    \field{urlyear}{2025}
+  \endentry
+
+  \entry{bib:YOLOv5}{misc}{}{}
+    \name{author}{1}{}{%
+      {{hash=u}{%
+         family={ultralytics},
+         familyi={u\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {GitHub}%
+    }
+    \strng{namehash}{u1}
+    \strng{fullhash}{u1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{howpublished}{\url{https://github.com/ultralytics/yolov5}}
+    \field{title}{YOLOv5 Dice Detection}
+    \field{journaltitle}{GitHub repository}
+    \field{year}{2024}
+  \endentry
+
+  \entry{bib:kotlin}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=K}{%
+         family={Kotlin},
+         familyi={K\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{K1}
+    \strng{fullhash}{K1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Kotlin Documentation}
+    \verb{url}
+    \verb https://kotlinlang.org/docs/android-overview.html
+    \endverb
+    \field{urlday}{17}
+    \field{urlmonth}{12}
+    \field{urlyear}{2024}
+  \endentry
+
+  \entry{bib:figma}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=SM}{%
+         family={Sofowora},
+         familyi={S\bibinitperiod},
+         given={Mayokun},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{SM1}
+    \strng{fullhash}{SM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Kavi thesis project}
+    \verb{url}
+    \verb https://figma.com/design/LGri6Wuhf4xouWkr1isiaO/Kavi-thesis-project?n
+    \verb ode-id=0-1&p=f&t=ZO6sxtXh6GW9vh82-0
+    \endverb
+    \field{year}{2024}
+    \field{urlday}{15}
+    \field{urlmonth}{01}
+    \field{urlyear}{2025}
+  \endentry
+
+  \entry{bib:git}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=G}{%
+         family={Git},
+         familyi={G\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{G1}
+    \strng{fullhash}{G1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Git Documentation}
+    \verb{url}
+    \verb https://git-scm.com/doc
+    \endverb
+    \field{urlday}{17}
+    \field{urlmonth}{12}
+    \field{urlyear}{2024}
+  \endentry
+
+  \entry{bib:androidstudio}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=DA}{%
+         family={Developer},
+         familyi={D\bibinitperiod},
+         given={Android},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{DA1}
+    \strng{fullhash}{DA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Android Studio}
+    \verb{url}
+    \verb https://developer.android.com/studio/
+    \endverb
+    \field{urlday}{05}
+    \field{urlmonth}{10}
+    \field{urlyear}{2024}
+  \endentry
+
+  \entry{bib:peerD}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=DP}{%
+         family={D.},
+         familyi={D\bibinitperiod},
+         given={Peer},
+         giveni={P\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{DP1}
+    \strng{fullhash}{DP1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Performance Benchmarks Of Jetpack Compose Versus Xml Layouts
+  In Android Applications}
+    \verb{url}
+    \verb https://peerdh.com/blogs/programming-insights/performance-benchmarks-
+    \verb of-jetpack-compose-versus-xml-layouts-in-android-applications/
+    \endverb
+    \field{year}{2024}
+    \field{urlday}{15}
+    \field{urlmonth}{01}
+    \field{urlyear}{2025}
+  \endentry
+
+  \entry{bib:jetpackcompose}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=DA}{%
+         family={Developer},
+         familyi={D\bibinitperiod},
+         given={Android},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{DA1}
+    \strng{fullhash}{DA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Jetpack Compose}
+    \verb{url}
+    \verb https://developer.android.com/jetpack/compose
+    \endverb
+    \field{urlday}{05}
+    \field{urlmonth}{10}
+    \field{urlyear}{2024}
+  \endentry
+
+  \entry{bib:daggerhilt}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=DA}{%
+         family={Developer},
+         familyi={D\bibinitperiod},
+         given={Android},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{DA1}
+    \strng{fullhash}{DA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Dependency Injection with Hilt}
+    \verb{url}
+    \verb https://developer.android.com/training/dependency-injection/hilt-andr
+    \verb oid/
+    \endverb
+    \field{urlday}{10}
+    \field{urlmonth}{10}
+    \field{urlyear}{2024}
+  \endentry
+
+  \entry{bib:lottie}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=L}{%
+         family={Lottie},
+         familyi={L\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{L1}
+    \strng{fullhash}{L1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Lottie Animation}
+    \verb{url}
+    \verb https://airbnb.io/lottie/#/android
+    \endverb
+    \field{urlday}{05}
+    \field{urlmonth}{01}
+    \field{urlyear}{2024}
+  \endentry
+
+  \entry{bib:vicocharts}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=CV}{%
+         family={Charts},
+         familyi={C\bibinitperiod},
+         given={Vico},
+         giveni={V\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{CV1}
+    \strng{fullhash}{CV1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Vico Charts Documentation}
+    \verb{url}
+    \verb https://vicotools.com/charts/documentation
+    \endverb
+    \field{urlday}{05}
+    \field{urlmonth}{01}
+    \field{urlyear}{2025}
+  \endentry
+
+  \entry{bib:timber}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=TR}{%
+         family={Tamada},
+         familyi={T\bibinitperiod},
+         given={Ravi},
+         giveni={R\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{TR1}
+    \strng{fullhash}{TR1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Android Better Logging using Timber Library}
+    \verb{url}
+    \verb https://www.androidhive.info/2024/10/android-better-logging-using-tim
+    \verb ber.html
+    \endverb
+    \field{year}{2024}
+    \field{urlday}{06}
+    \field{urlmonth}{01}
+    \field{urlyear}{2025}
+  \endentry
+
+  \entry{bib:junit}{online}{}{}
+    \name{author}{7}{}{%
+      {{hash=BS}{%
+         family={Bechtold},
+         familyi={B\bibinitperiod},
+         given={Stefan},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=BS}{%
+         family={Brannen},
+         familyi={B\bibinitperiod},
+         given={Sam},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=LJ}{%
+         family={Link},
+         familyi={L\bibinitperiod},
+         given={Johannes},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=MM}{%
+         family={Merdes},
+         familyi={M\bibinitperiod},
+         given={Matthias},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=PM}{%
+         family={Philipp},
+         familyi={P\bibinitperiod},
+         given={Marc},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=dRJ}{%
+         prefix={de},
+         prefixi={d\bibinitperiod},
+         family={Rancourt},
+         familyi={R\bibinitperiod},
+         given={Juliette},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=SC}{%
+         family={Stein},
+         familyi={S\bibinitperiod},
+         given={Christian},
+         giveni={C\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{BS+1}
+    \strng{fullhash}{BSBSLJMMPMRJdSC1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{JUnit 5 User Guide}
+    \verb{url}
+    \verb https://junit.org/junit5/docs/current/user-guide/#writing-tests
+    \endverb
+    \field{year}{2024}
+    \field{urlday}{06}
+    \field{urlmonth}{01}
+    \field{urlyear}{2024}
+  \endentry
+
+  \entry{bib:kavifigma}{misc}{}{}
+    \name{author}{1}{}{%
+      {{hash=SM}{%
+         family={Sofowora},
+         familyi={S\bibinitperiod},
+         given={Mayokun},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Figma}%
+    }
+    \strng{namehash}{SM1}
+    \strng{fullhash}{SM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+  \field{howpublished}{\url{https://www.figma.com/design/LGri6Wuhf4xouWkr1isiaO/Kavi-thesis-project?node-id=0-1&t=70pukjZzeoLWMij3-1}}
+    \field{title}{Kavi thesis project}
+    \field{year}{2024}
+  \endentry
+
+  \entry{bib:binaryshrey}{misc}{}{}
+    \name{author}{1}{}{%
+      {{hash=SS}{%
+         family={Saurabh},
+         familyi={S\bibinitperiod},
+         given={Shreyansh},
+         giveni={S\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {GitHub}%
+    }
+    \strng{namehash}{SS1}
+    \strng{fullhash}{SS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{howpublished}{\url{https://github.com/binaryshrey/Dice/tree/main}}
+    \field{title}{Dice}
+    \field{journaltitle}{GitHub repository}
+    \field{year}{2021}
+  \endentry
+
+  \entry{bib:android_data_backup}{online}{}{}
+    \field{labeltitlesource}{title}
+    \field{title}{Android Data Backup Documentation}
+    \verb{url}
+    \verb https://developer.android.com/guide/topics/data/backup
+    \endverb
+    \field{urlday}{07}
+    \field{urlmonth}{01}
+    \field{urlyear}{2025}
+  \endentry
+
+  \entry{bib:owasp_top_ten}{online}{}{}
+    \field{labeltitlesource}{title}
+    \field{title}{OWASP Top 10, Security Misconfiguration}
+    \verb{url}
+    \verb https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_
+    \verb A06-Security_Misconfiguration
+    \endverb
+    \field{urlday}{07}
+    \field{urlmonth}{01}
+    \field{urlyear}{2025}
+  \endentry
+
+  \entry{bib:android_obfuscation}{online}{}{}
+    \field{labeltitlesource}{title}
+    \field{title}{Android code obfuscation documentation}
+    \verb{url}
+    \verb https://developer.android.com/build/shrink-code
+    \endverb
+    \field{urlday}{07}
+    \field{urlmonth}{01}
+    \field{urlyear}{2025}
+  \endentry
+
+  \entry{bib:vmodel}{book}{}{}
+    \name{author}{2}{}{%
+      {{hash=FK}{%
+         family={Forsberg},
+         familyi={F\bibinitperiod},
+         given={Kevin},
+         giveni={K\bibinitperiod},
+      }}%
+      {{hash=MH}{%
+         family={Mooz},
+         familyi={M\bibinitperiod},
+         given={Harold},
+         giveni={H\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{FKMH1}
+    \strng{fullhash}{FKMH1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{edition}{2nd}
+    \field{title}{The V-Model: Application and Implementation in Software
+  Engineering}
+    \list{location}{1}{%
+      {New York}%
+    }
+    \field{year}{2009}
+  \endentry
+\enddatalist
+\endinput

@@ -1,0 +1,287 @@
+\chapter{Problem Analysis}
+
+Creating an engaging dice game application that utilizes computer vision presents unique challenges that require careful consideration. This chapter examines the key aspects of developing an adaptive AI capable of playing various dice game variants while ensuring reliable real-time detection. Understanding these challenges is essential for accurate dice detection in different conditions, identifying the best computer vision model architectures, and designing an AI opponent that captivates players.
+
+\section{Computer Vision}
+
+Computer vision plays a key role in enabling the smooth integration of physical dice into digital gameplay. This section discusses the challenges and solutions involved in dice detection and recognition.
+
+\subsection{Challenges in Dice Recognition}
+
+The implementation of accurate dice recognition presents several technical challenges:
+\begin{itemize}
+    \item \textbf{Lighting Variations}: Dice faces appear differently under various lighting conditions. This includes shadows that can hide the patterns of pips, or dots on the dice, reflective surfaces causing glare, and significant differences between indoor and outdoor lighting that affect contrast and visibility.
+    \item \textbf{Perspective and Orientation}: The system must handle dice captured at different angles, which affects how pips appear in the image. Multiple dice can overlap or occlude each other, and the distance between the camera and dice impacts pip visibility and overall recognition accuracy.
+    \item \textbf{Background Complexity}: Various playing surfaces can affect detection reliability. Similar patterns in the background may trigger false positives, while moving backgrounds, such as when playing on unstable surfaces, can further complicate the detection process.
+    \item \textbf{Real-time Processing Requirements}: The system must process frames quickly for a responsive user experience. This involves careful management of battery consumption and memory usage, requiring optimized processing algorithms and efficient resource management.
+\end{itemize}
+
+\subsection{Image Preprocessing}
+
+The system employs a sophisticated preprocessing pipeline that enhances image quality for more accurate recognition:
+\addcodelistentry{lst:image_preprocess}
+\begin{lstlisting}[language=Kotlin, caption={Image Preprocessing Pipeline}, label=lst:image_preprocess]
+    private suspend fun preprocessImage(bitmap: Bitmap): Bitmap {
+        return withContext(Dispatchers.Default) {
+            try {
+                // Step 1: Convert to RGB if needed
+                val rgbBitmap = ensureRGBFormat(bitmap)
+
+                // Step 2: Enhance contrast and normalize lighting
+                val enhancedBitmap = enhanceContrast(rgbBitmap)
+
+                // Step 3: Scale while maintaining aspect ratio
+                val scaledBitmap = scaleWithAspectRatio(enhancedBitmap, TARGET_SIZE)
+
+                // Step 4: Apply noise reduction
+                val finalBitmap = reduceNoise(scaledBitmap)
+
+                Timber.d("Preprocessing completed successfully")
+                finalBitmap
+            } catch (e: Exception) {
+                Timber.e(e, "Error during image preprocessing")
+                // Fallback to basic scaling if enhancement fails
+                Bitmap.createScaledBitmap(bitmap, TARGET_SIZE, TARGET_SIZE, true)
+            }
+        }
+    }
+\end{lstlisting}
+\label{lst:image_preprocess}
+
+\subsection{Model Architecture}
+The dice recognition system leverages a pre-trained object detection model from Roboflow \cite{bib:kavidataset}. The model processes images at 640x640 resolution and was trained on a custom dataset of 250 images, supporting six distinct classes representing dice faces 1-6. Developed and hosted on Roboflow's platform, it provides efficient object detection capabilities through their API service.
+
+The model is then accessed through Roboflow's Hosted Inference API, with preprocessing handling:
+\begin{itemize}
+    \item RGB format conversion
+    \item Image scaling to the required 640x640 dimensions
+    \item Confidence threshold (set at 0.4 for reliable detections)
+\end{itemize} 
+
+For each detected die, the model outputs bounding box coordinates, confidence scores, and class labels, which the application processes to update the game state.
+
+\subsection{Detection Pipeline}
+The detection pipeline evolved throughout development, starting with a basic implementation and later expanding to include more sophisticated preprocessing and validation.
+
+The initial detection process followed a straightforward approach:
+\addcodelistentry{lst:initial_dice_detection}
+\begin{lstlisting}[language=Kotlin, caption={Initial Dice Detection Pipeline}, label=lst:initial_dice_detection]
+suspend fun detectDice(bitmap: Bitmap): List<Detection> {
+    return withContext(Dispatchers.Default) {
+        try {
+            // Preprocess the image
+            val processed = preprocessImage(bitmap)
+            // Run inference
+            val detections = roboflowRepository.detectDice(processed)
+            // Post-process results
+            filterAndValidateDetections(detections)
+        } catch (e: Exception) {
+            Timber.e(e, "Error detecting dice")
+            emptyList()
+        }
+    }
+}
+\end{lstlisting}
+\label{lst:initial_dice_detection}
+
+The pipeline was later enhanced to improve detection reliability through:
+\begin{itemize}
+    \item \textbf{Advanced Preprocessing}: Implementation of RGB format conversion, contrast enhancement, and adaptive scaling while maintaining aspect ratios.
+    \item \textbf{Robust Validation}: Addition of comprehensive detection validation including aspect ratio checks, minimum size requirements, and position validation.
+    \item \textbf{Quality Filters}: Implementation of confidence threshold and noise reduction techniques.
+\end{itemize}
+
+This enhanced pipeline significantly improved detection accuracy and reliability across various lighting conditions and capture scenarios.
+
+\section{Asynchronous Processing}
+
+Kotlin Coroutines are used to handle asynchronous updates efficiently, ensuring the app remains responsive. This section explores the benefits of coroutines and their role in managing background tasks.
+
+\subsection{Coroutine Scope}
+
+The \texttt{viewModelScope} is tied to the lifecycle of the ViewModel. This ensures that coroutines are automatically canceled when the ViewModel is cleared, preventing memory leaks and unnecessary processing.
+
+\begin{figure}[ht!]
+    \centering
+    \begin{tikzpicture}[box/.style={draw, rectangle, fill=gray!20, text width=3cm, align=center, minimum height=1cm}, >=Stealth]
+        % Nodes
+        \node[box] (start) {ViewModel Created};
+        \node[box, below=2cm of start] (scope) {viewModelScope Active};
+        \node[box, below=2cm of scope] (end) {ViewModel Cleared};
+        % Arrows
+        \draw[->] (start) -- (scope);
+        \draw[->] (scope) -- (end);
+    \end{tikzpicture}
+\end{figure} 
+\label{fig:lifecycle_viewmodelscope}
+
+\subsection{Launching Coroutines}
+
+The \texttt{launch} function starts a new coroutine, allowing non-blocking execution. This is crucial for processing tasks like dice value detection or data loading, which can be time-consuming.
+    \addcodelistentry{lst:launch_coroutine}
+\begin{lstlisting}[language=Kotlin, caption={Launching a Coroutine}, label=lst:launch_coroutine]
+viewModelScope.launch {
+    // Load vibration setting
+    dataStoreManager.getVibrationEnabled()
+        .collect { enabled -> _vibrationEnabled.value = enabled }
+}
+\end{lstlisting}
+\label{lst:launch_coroutine}
+
+\subsection{Suspend Functions}
+
+Suspend functions are a key feature of Kotlin's coroutine system, marking functions that can be paused and resumed. These functions can only be called from within a coroutine or another suspend function, ensuring proper asynchronous execution.
+\addcodelistentry{lst:suspend_function}
+\begin{lstlisting}[language=Kotlin, caption={Suspend Function Example}, label=lst:suspend_function]
+fun rollDice() {
+    if (isRolling.value || !isRollAllowed.value) return
+    viewModelScope.launch {
+        trackDecision()
+        trackRoll()
+        _isLoading.value = true
+        val results = diceManager.rollDiceForBoard(_selectedBoard.value)
+        if (_vibrationEnabled.value) provideHapticFeedback()
+        // Process game state after rolling
+        val newState = processGameState(results)
+        _gameState.value = newState
+    }
+}
+\end{lstlisting}
+\label{lst:suspend_function}
+
+In this example, the \texttt{rollDice} function is designed to manage the dice-rolling process within the game. It is executed within a coroutine scope using \texttt{viewModelScope.launch}, which allows it to perform asynchronous operations without blocking the main thread. This ensures that the UI remains responsive while the dice are being rolled.
+
+The function begins by checking if a roll is already in progress or if rolling is not allowed, returning early if either condition is true. This prevents unnecessary operations and ensures that the game logic is executed only when appropriate.
+
+Within the coroutine, the function tracks the player's decision and roll actions, providing valuable data for game analytics. It then sets a loading state to indicate that a roll is in progress. The actual dice rolling is performed by the \texttt{diceManager}, which returns the roll results.
+
+If vibration feedback is enabled, the function provides haptic feedback to enhance the user experience. Finally, the function processes the game state based on the roll results and updates the game state accordingly.
+
+The use of coroutines in this function allows for efficient management of asynchronous tasks, ensuring that the game logic is executed smoothly and without interruption. This design pattern is essential for maintaining a responsive and engaging user interface in a coroutine-based architecture.
+
+\subsection{Error Handling}
+
+The \texttt{try-catch} block within the coroutine handles exceptions, ensuring errors are logged and managed gracefully. This prevents crashes and maintains application stability.
+    \addcodelistentry{lst:error_handling_coroutine}
+\begin{lstlisting}[language=Kotlin, caption={Error Handling in Coroutines}, label=lst:error_handling_coroutine]
+viewModelScope.launch {
+    try {
+        val detections = roboflowRepository.detectDice(bitmap)
+        _detectionState.value = if (detections.isNotEmpty()) {
+            DetectionState.Success(detections)
+        } else {
+            DetectionState.NoDetections
+        }
+    } catch (e: Exception) {
+        Timber.e(e, "Error detecting dice")
+        _detectionState.value = DetectionState.Error(e.message ?: "Unknown error")
+    }
+}
+\end{lstlisting}
+\label{lst:error_handling_coroutine}
+
+The coroutine runs in the background, ensuring the main thread remains responsive to user interactions. Listing \ref{lst:error-handling} illustrates the implementation of error handling within a coroutine. It processes collected data to update a LiveData property, enabling the UI to dynamically reflect any changes.
+
+\subsection{Interface Responsiveness}
+
+In interactive applications, maintaining a responsive user interface (UI) is critical to delivering a seamless user experience. By offloading computationally intensive tasks, such as AI decision-making and data processing, to background threads, the main UI thread remains available for handling real-time user interactions. This approach minimizes UI lag, ensuring that animations, gestures, and updates occur smoothly without delays.
+
+For instance, in the context of dice games, background tasks such as calculating potential AI strategies or updating game states are delegated to coroutine-based background threads in Kotlin. This concurrency model enables a separation of concerns, where the UI layer focuses solely on rendering and responding to user input while backend logic operates asynchronously. The result is a user experience that feels intuitive and highly responsive, even under computationally demanding scenarios.
+
+\section{Gameplay}
+
+Making a game with lively gameplay mechanics presents many challenges, particularly when integrating adaptive AI and ensuring a balance between challenge and accessibility. This section delves into the solutions employed to address these challenges.
+
+\subsection{Scoring Algorithm}
+
+The scoring algorithm calculates scores based on the game's rules and considers various scoring categories and player actions. 
+For example, in a game like Pig, the score for a single turn can be calculated as:
+\begin{equation}
+\text{Turn Score} = \sum_{i=1}^{n} x_i
+\end{equation}
+where $n$ is the number of dice rolls in the turn, and $x_i$ represents the value of each dice roll.
+The scoring algorithm plays a crucial role in determining the outcome of the game and ensuring fair and consistent scoring across different game variants and player actions.
+
+\subsection{Adaptive AI}
+
+The AI system uses strategic decision-making to adapt its behavior dynamically, enhancing engagement by providing a challenging opponent.
+ \addcodelistentry{lst:ai_turn_function}
+\begin{lstlisting}[language=Kotlin, caption={handleAITurn Function}, label=lst:ai_turn_function]
+private fun handleAITurn(
+    diceResults: List<Int>, currentState: BalutScoreState
+): BalutScoreState {
+    gameTracker.trackDecision()
+    if (currentState.rollsLeft <= 0) {
+        // AI chooses a category
+        val category = chooseAICategory(diceResults, currentState)
+        gameTracker.trackBanking(ScoreCalculator.calculateCategoryScore(diceResults, category))
+        return scoreCategory(currentState, diceResults, category)
+    }
+
+    // AI decides which dice to hold
+    gameTracker.trackRoll()
+    val diceToHold = decideAIDiceHolds(diceResults)
+
+    return currentState.copy(
+        rollsLeft = currentState.rollsLeft - 1,
+        heldDice = diceToHold
+    )
+}
+\end{lstlisting}
+\label{lst:ai_turn_function}
+
+The decision-making process is augmented by a game tracker, which records AI decisions for further analysis. These insights allow developers to fine-tune the AI, ensuring it provides both a challenging and fair opponent.
+
+\subsection{Game Mechanics}
+
+The game mechanics are crucial for delivering an engaging and intuitive gameplay experience. They are designed to ensure clear rules and interactions for both players and the AI, enabling a seamless game flow.
+   \addcodelistentry{lst:handle_turn_function}
+An important component of the implementation is the \texttt{handleTurn} method, as shown in Listing \ref{lst:handleTurn}. This method differentiates between player and AI turns and manages key actions such as dice holding and roll counting. Its modular design supports clear separation of player and AI logic into distinct methods, reducing complexity and improving maintainability. This structure makes it easy to add new game modes or refine AI behavior without disrupting existing functionality.
+
+During its turn, the AI uses a blend of predefined rules and probabilistic decision-making to evaluate the game state and select the optimal strategy, providing a dynamic and challenging opponent. Meanwhile, the game mechanics prioritize user experience by offering clear visual and interactive cues, ensuring that players can focus on strategy without being hindered by the interface.
+
+\begin{lstlisting}[language=Kotlin, caption={handleTurn Function}, label=lst:handleTurn]
+fun handleTurn(
+        currentState: GameScoreState.PigScoreState,
+        diceResult: Int? = null
+    ): GameScoreState.PigScoreState =
+        when (currentState.currentPlayerIndex) {
+            AI_PLAYER_ID.hashCode() -> handleAITurn(currentState, diceResult)
+            else -> handlePlayerTurn(currentState, diceResult)
+        }
+\end{lstlisting}
+\label{lst:handleTurn}
+
+In the \texttt{handleTurn} method:
+\begin{itemize}
+    \item \textbf{AI Turn Handling:} If the current player's index matches the AI player's identifier, the method delegates the turn to \texttt{handleAITurn}, which implements the AI's decision-making logic. This includes evaluating the game state, deciding which dice to hold, and determining whether to bank a score or re-roll.
+    \item \textbf{Player Turn Handling:} If the turn belongs to a human player, the method invokes \texttt{handlePlayerTurn}, which processes the player's actions, such as selecting dice to hold and performing a roll.
+\end{itemize}
+
+By isolating player-specific and AI-specific logic into separate methods, the design enhances code readability and maintainability. This modular approach ensures that updates or adjustments to AI strategies or player interactions can be made independently, maintaining the overall flow of the game.
+
+This structured design allows for a compelling gaming experience by promoting a dynamic AI challenge while ensuring that interactions remain clear and responsive. The thoughtful integration of adaptive AI, clear gameplay mechanics, and user-focused design ensures that the game is accessible to players of all skill levels. Additionally, the modularity of the architecture enables the seamless incorporation of advanced features, such as multiplayer modes or new game variants, without disrupting the core mechanics.
+
+Through these technical and strategic design choices, the project delivers an engaging dice game that is robust and scalable for future enhancements.
+
+\section{Broader Implications}
+
+This project goes beyond addressing technical challenges by bridging the gap between physical and digital gaming. It enhances the educational value of dice games while promoting critical thinking, decision-making skills, and overall player engagement. By leveraging augmented reality and machine learning, it introduces innovative gaming experiences that make traditional gameplay more interactive and dynamic.
+
+\subsection{Educational Value and Accessibility} The integration of AI and computer vision enhances the educational aspects of dice games by fostering strategic thinking and problem-solving. With adaptive AI providing real-time feedback and dice detection enhancing gameplay, players are offered a platform to develop their skills in a fun and engaging way. 
+
+\section{Existing Solutions}
+
+In the realm of dice detection and recognition, several solutions have been developed to address the challenges of accurately identifying dice values in various contexts. This section provides a brief overview of some notable solutions.
+
+\subsection{D3-Deep-Dice-Detector}
+
+The D3-Deep-Dice-Detector is a robust solution that leverages deep learning techniques to detect and recognize dice values from images. It utilizes convolutional neural networks (CNNs) to process image data and accurately predict dice outcomes. This approach is particularly effective in environments with varying lighting conditions and dice orientations. The project is available on GitHub and provides pre-trained models and scripts for training on custom datasets \cite{bib:D3-Dice}.
+
+\subsection{Roboflow Dice Detection}
+
+Roboflow \cite{bib:roboflow} offers a comprehensive platform for building and deploying computer vision models, including dice detection. Their solution allows users to train custom models using their datasets, providing flexibility and adaptability to specific use cases. The platform supports various model architectures and offers tools for data augmentation and model evaluation. Roboflow's community and documentation provide valuable resources for developers looking to implement dice detection.
+
+\subsection{Dice Detection with YOLOv5}
+
+The YOLOv5 Dice Detection \cite{bib:YOLOv5} repository by \textit{ultralytics} showcases the use of the YOLOv5 object detection model for various object recognition tasks, including dice recognition. This solution involves training a YOLOv5 model on a dataset of dice images to achieve high accuracy in detecting and classifying dice values. The repository provides scripts for data preparation, model training, and inference.
