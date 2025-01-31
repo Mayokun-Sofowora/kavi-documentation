@@ -75,25 +75,26 @@
 % ========================
 \usetikzlibrary{arrows.meta, positioning} % Add TikZ libraries for diagrams
 
+% ========================
+% Pseudocode Listing Setup
+% ========================
+\usepackage{listings} % Ensure the listings package is included
+
 \newcounter{listingcounter} % Initialize the listing counter
-\newcommand{\codelistentry}[3]{%
-    \refstepcounter{listingcounter}% Update the counter
-    \par\noindent\textbf{Pseudocode Listing \thelistingcounter:} \textit{#2} \hfill Page \pageref{#1}\par
-}
-\newcommand{\addcodelistentry}[1]{%
-    \refstepcounter{listingcounter}% Update the counter
-    \label{#1}
-}
-\newcommand{\listoflistings}{%
-    \setcounter{listingcounter}{-17} % Reset counter before printing the list
-    \begin{flushleft}
-        % Print all listings
-        \foreach \listing in {list-of-your-labels}{
-            \codelistentry{\listing}{Description of the listing}{}
-        }
-    \end{flushleft}
+
+\newcommand{\codelistentry}[2]{%
+    \par\noindent\textit{#2} (\texttt{\ref{#1}})%
+    \par
 }
 
+\newcommand{\addcodelistentry}[1]{%
+    \refstepcounter{listingcounter} % Update the counter
+    \label{#1}
+}
+
+\newcommand{\listoflistings}{%
+    \lstlistoflistings % Automatically generates the list of all listings
+}
 
 % ========================
 % Minted Package (Optional)

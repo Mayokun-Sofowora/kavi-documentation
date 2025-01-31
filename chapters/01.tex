@@ -1,15 +1,39 @@
 
 \chapter{Introduction}
+\label{chap:introduction}
 
-In recent years, mobile gaming has experienced exponential growth, yet many games fail to deliver the sophistication needed to sustain player interest. Traditional dice games, with their straightforward mechanics and strategic depth, offer a unique opportunity for innovation. However, current mobile dice games often fall short due to predictable AI behavior and limited analytics \cite{bib:appannie}. These limitations result in gameplay that feels static, with easily exploitable strategies and little feedback to help players improve \cite{bib:yannakakis}. As a result, players struggle to stay engaged, often facing steep learning curves without meaningful insights into their progress.
+In recent years, mobile gaming has seen rapid growth, yet many games fail to deliver the complexity and engagement necessary for long-term player retention\footnote{Dice games have a rich history dating back thousands of years, with early examples found in ancient cultures such as Mesopotamia and Egypt. The simplicity and randomness of dice rolls have made them a staple in games of chance and strategy.}. Traditional dice games, with their simple rules and strategic depth, offer an opportunity to innovate within the mobile gaming space. However, many mobile dice games often fall short due to \emph{predictable AI behavior} and a lack of meaningful player feedback ~\cite{bib:appannie}. This can lead to gameplay that feels repetitive, with easily exploitable strategies and minimal opportunities for players to improve ~\cite{bib:yannakakis}. Such shortcomings often result in disengaged players who struggle with steep learning curves, lacking any real insights into their progress.
 
-\section{Objective of the Thesis}
+\section{Objectives}
+This thesis presents the development of a mobile application designed to support and enhance dice games through the integration of \emph{artificial intelligence (AI)} and \emph{image recognition technology}. The goal of this project is to create an immersive, intelligent, and interactive mobile gaming experience by addressing the following key objectives:
+\begin{enumerate}
+    \item To implement an adaptive AI system that adjusts to the player’s skill level across various dice games.
+    \item To develop an image recognition system that allows users to simulate dice rolls using their device's camera.
+    \item To enhance the user experience by providing dynamic gameplay, real-time interaction, and a seamless transition between the physical and digital worlds.
+\end{enumerate}
 
-This thesis aims to overcome these challenges by developing an advanced mobile dice game application that reimagines classic gameplay with modern technology. The application will feature an adaptive AI opponent capable of accessing player behavior to deliver a dynamic and evolving challenge. This approach ensures that gameplay remains engaging and rewarding, catering to players of all skill levels.
+\section{Project Requirements}
+This section outlines the essential requirements that the project aims to fulfil to achieve its objectives.
 
-To enhance the gaming experience further, the project incorporates virtual screen technology to simulate real-world dice interactions, bringing the tactile excitement of traditional dice games into the digital space. Additionally, a comprehensive analytics system will track detailed performance metrics, offering players personalized insights and fostering long-term engagement.
+\begin{itemize}
+    \item Support for classic dice games such as \emph{Pig}, \emph{Balut}, and \emph{Greed}.
+    \item Integration of an AI engine capable of adapting to player strategies and behaviors.
+    \item Real-time image recognition to detect dice patterns and simulate rolls.
+    \item A mobile application built with \emph{Kotlin} and \emph{Jetpack Compose} for a responsive and intuitive interface.
+    \item Efficient performance with real-time gameplay and minimal latency.
+\end{itemize}
 
-By combining these innovations, this thesis seeks to redefine mobile dice gaming. Through adaptive AI, virtual interactions, and meaningful analytics, the project bridges the gap between classic dice games and cutting-edge technology, setting a new benchmark for the genre.
+The application is built using \emph{Kotlin} and \emph{Jetpack Compose}, offering a blend of traditional dice game mechanics and modern technological enhancements. The AI component provides a \emph{challenging and adaptive opponent}, while the image recognition system offers a seamless gaming experience that bridges the gap between the physical and virtual worlds.
 
-\section{Overview of Thesis Chapters}
-This thesis is organized into seven chapters. Chapter 1 introduces the mobile gaming landscape and dice games, along with the motivation behind this project. Chapter 2 analyses the problem, exploring the mechanics of dice games, the role of AI in gaming, and mobile app architecture. Chapter 3 outlines the system requirements, architecture design, data model, user interface, and AI model design. Chapter 4 details the external specifications, including the development of the Android application, integration with TensorFlow Lite, and the implementation of player analytics and game mechanics. Chapter 5 focuses on the internal specifications of the project, covering unit testing, integration testing, and user acceptance testing, as well as performance analysis and evaluation of the AI model. Chapter 6 addresses verification and validation to ensure the system meets its requirements and functions correctly. Finally, Chapter 7 concludes the thesis by summarizing its key elements, highlighting its achievements, limitations, and suggestions for future improvements.
+\section{Thesis Structure}
+This thesis is structured into seven chapters, each addressing a specific aspect of the project.
+
+\begin{enumerate}
+    \item Chapter ~\ref{chap:introduction} introduces the mobile gaming landscape, along with the project's goals and requirements.
+    \item Chapter ~\ref{chap:requirements-and-tools} outlines the system requirements, architecture design, data model, user interface, and AI model design.
+    \item In Chapter ~\ref{chap:problem-analysis}, the problem is accessed, exploring the mechanics of dice games, the role of artificial intelligence (AI) in gaming, and the architecture of mobile applications.
+    \item The external specifications are detailed in Chapter ~\ref{chap:external-specifications}, covering the development of the Android application, integration with TensorFlow Lite, and the implementation of player analytics and game mechanics.
+    \item Chapter ~\ref{chap:internal-specifications} covers the internal specifications, including unit testing, integration testing, and user acceptance testing, as well as performance analysis and evaluation of the AI model.
+    \item Verification and validation processes are discussed in Chapter ~\ref{chap:verification-and-validation}, ensuring the system meets its requirements and functions correctly.
+    \item Finally, Chapter ~\ref{chap:conclusions} summarizes the key elements of the thesis, reflecting on its achievements, limitations, and offering suggestions for future improvements.
+\end{enumerate}

@@ -1,4 +1,5 @@
 \chapter{Verification and Validation}
+\label{chap:verification-and-validation}
 
 Ensuring the reliability, functionality, and usability of software applications necessitates rigorous verification and validation processes. Verification confirms that the application is built according to design specifications, while validation ensures it fulfils user needs.
 
@@ -59,36 +60,32 @@ Each development activity was paired with a corresponding testing phase to ensur
 The V-Model incorporates two fundamental types of testing:
 \begin{itemize}
     \item \textbf{Verification}: Involves activities like reviews, inspections, and static testing to confirm the application meets specified requirements. For example, unit tests confirm that individual components behave as designed.
-    \addcodelistentry{lst:unit_game_init}
     \begin{lstlisting}[language=Kotlin, caption=Unit Test for Game Initialization, label=lst:unit_game_init]
-    @Test
-    fun `test game initialization`() {
-        val gameState = balutGameManager.initializeGame()
-            
-        // Verify initial state
-        assertEquals(2, gameState.playerScores.size)
-        assertTrue(gameState.playerScores[0]?.isEmpty() == true)
-        assertEquals(1, gameState.currentRound)
-        assertFalse(gameState.isGameOver)
-    }
+        @Test
+        fun `test game initialization`() {
+            val gameState = balutGameManager.initializeGame()
+                
+            // Verify initial state
+            assertEquals(2, gameState.playerScores.size)
+            assertTrue(gameState.playerScores[0]?.isEmpty() == true)
+            assertEquals(1, gameState.currentRound)
+            assertFalse(gameState.isGameOver)
+        }
     \end{lstlisting}
-    \label{lst:unit_game_init}
     \item \textbf{Validation}: Consists of dynamic testing where the final product is evaluated to confirm it meets user requirements and needs. For example, integration tests are done to confirm correct interactions between software modules.
-    \addcodelistentry{lst:integration_dice_detection}
     \begin{lstlisting}[language=Kotlin, caption=Integration Test for Dice Detection, label=lst:integration_dice_detection]
-    @Test
-    fun `detectDice should update state correctly`() = runTest {
-        val detections = listOf(mockk<Detection>())
-        coEvery { repository.detectDice(any()) } returns detections
-            
-        viewModel.detectDice(mockBitmap)
-        assert(viewModel.detectionState.value is DetectionState.Processing)
-            
-        testDispatcher.scheduler.advanceUntilIdle()
-        assert(viewModel.detectionState.value is DetectionState.Success)
-    } 
+        @Test
+        fun `detectDice should update state correctly`() = runTest {
+            val detections = listOf(mockk<Detection>())
+            coEvery { repository.detectDice(any()) } returns detections
+                
+            viewModel.detectDice(mockBitmap)
+            assert(viewModel.detectionState.value is DetectionState.Processing)
+                
+            testDispatcher.scheduler.advanceUntilIdle()
+            assert(viewModel.detectionState.value is DetectionState.Success)
+        } 
     \end{lstlisting}
-    \label{lst:integration_dice_detection}
 \end{itemize}
 
 
@@ -101,7 +98,6 @@ The application's testing strategy utilized full and partial approaches, as outl
 Full testing focused on critical components of the application:
 \begin{itemize}
     \item \textbf{Game Logic}: Included comprehensive tests of all game rules and scoring mechanics, targeting game manager components:
-      \addcodelistentry{lst:game_logic_unit}
     \begin{lstlisting}[language=Kotlin, caption=Unit Test for Game Logic, label=lst:game_logic_unit]
     @Test
     fun `test player rolls 1 and loses turn`() {
@@ -114,11 +110,9 @@ Full testing focused on critical components of the application:
         assertEquals(0, updatedState.playerScores[0])
     } 
     \end{lstlisting}
-    \label{lst:game_logic_unit}
 
     \item \textbf{User Interface}: Usability and responsiveness of the UI were assessed across different devices and screen sizes.
     \item \textbf{Integration Testing}: Validated the interaction of various application modules and their integration within a single system.
-       \addcodelistentry{lst:integration_game_view_model}
     \begin{lstlisting}[language=Kotlin, caption=Integration Test for Game View Model, label=lst:integration_game_view_model]
        @Test
        fun `integration test gameViewModel`() = runTest {
@@ -126,7 +120,6 @@ Full testing focused on critical components of the application:
            assert(gameState.currentPlayerIndex == AI_PLAYER_ID.hashCode())
         } 
     \end{lstlisting}
-    \label{lst:integration_game_view_model}
 \end{itemize}
 
 \subsection{Partial Testing}
@@ -135,8 +128,7 @@ Partial testing was applied to less critical components, with an emphasis on fun
 
 \begin{itemize}
     \item \textbf{Unit Testing}: Individual methods were assessed using JUnit tests focused on isolated code.
-    \addcodelistentry{lst:unit_dice_rolling}
-        \begin{lstlisting}[language=Kotlin, caption=Unit Test for Dice Rolling, label=lst:unit_dice_rolling]
+    \begin{lstlisting}[language=Kotlin, caption=Unit Test for Dice Rolling, label=lst:unit_dice_rolling]
         @Test
         fun `test roll dice for Greed game`() = runTest {
             val results = diceManager.rollDiceForBoard(GameBoard.GREED.modeName)
@@ -146,9 +138,7 @@ Partial testing was applied to less critical components, with an emphasis on fun
             }
         }
     \end{lstlisting}
-    \label{lst:unit_dice_rolling}
     \item \textbf{Regression Testing}: Existing functionality was assessed post-fixes and/or new additions to the code base, specifically to check and confirm errors fixed do not manifest and do not effect further components.
-         \addcodelistentry{lst:regression_game_completion}
     \begin{lstlisting}[language=Kotlin, caption=Regression Test for Game Completion, label=lst:regression_game_completion]
         @Test
         fun `test game completion`() {
@@ -168,7 +158,6 @@ Partial testing was applied to less critical components, with an emphasis on fun
             assertEquals(15, updatedState.playerScores[0]?.get("Choice"))
         }
     \end{lstlisting}
-    \label{lst:regression_game_completion}
 \end{itemize}
 
 \section{Detected and Fixed Bugs}
@@ -178,51 +167,44 @@ During testing, several issues were identified and subsequently fixed.  Notable 
 \begin{itemize}
 
     \item \textbf{Shake Detection Sensitivity}: Rapid shaking triggered multiple dice rolls, fixed with a debounce mechanism.
-      \addcodelistentry{lst:shake_detection_fix_code}
-        \begin{lstlisting}[language=Kotlin, caption=Fix for Shake Detection Sensitivity, label=lst:shake_detection_fix_code]
-    fun resumeShakeDetection() {
-        shakeDetectionManager.setOnShakeListener {
-            viewModelScope.launch {
-                shakeFlow.emit(Unit)
-            }
-        }
-        viewModelScope.launch {
-            shakeFlow
-                .debounce(300) // Added 300ms debounce
-                .collect {
-                    if (!isRolling.value && isRollAllowed.value) 
-                        rollDice()
+    \begin{lstlisting}[language=Kotlin, caption=Fix for Shake Detection Sensitivity, label=lst:shake_detection_fix_code]
+        fun resumeShakeDetection() {
+            shakeDetectionManager.setOnShakeListener {
+                viewModelScope.launch {
+                    shakeFlow.emit(Unit)
                 }
-        }
-    } 
-    \end{lstlisting}
-    \label{lst:shake_detection_fix_code}
-
-    \item \textbf{Settings Navigation State Loss}: Navigation to the settings screen reset the game state; addressed by using launched effects for navigation to ensure game state retention.
-     \addcodelistentry{lst:setting_navigation_fix_code}
-        \begin{lstlisting}[language=Kotlin, caption=Fix for Settings Navigation State Loss, label=lst:setting_navigation_fix_code]
-    LaunchedEffect(selectedBoard) {
-        // Only reset game if board type changes
-        if (selectedBoard != currentBoardType) {
-            viewModel.setSelectedBoard(boardType)
-            viewModel.resetGame()
-        }
-    } 
-    \end{lstlisting}
-     \label{lst:setting_navigation_fix_code}
-   
-
-    \item \textbf{Game State Initialization}: Game state not correctly initialized leading to incorrect player scores. Was fixed by ensuring the game state was reset correctly when starting the game.
-        \addcodelistentry{lst:game_state_reset}
-    \begin{lstlisting}[language=Kotlin, caption=Fix for Game State Initialization, label=lst:game_state_reset]
-        fun resetGame() = viewModelScope.launch {
-        _showWinDialog.value = false
-        _heldDice.value = emptySet()
-        diceManager.resetGame()
-        statisticsManager.startGameTiming()
+            }
+            viewModelScope.launch {
+                shakeFlow
+                    .debounce(300) // Added 300ms debounce
+                    .collect {
+                        if (!isRolling.value && isRollAllowed.value) 
+                            rollDice()
+                    }
+            }
         } 
     \end{lstlisting}
-    \label{lst:game_state_reset}
+
+    \item \textbf{Settings Navigation State Loss}: Navigation to the settings screen reset the game state; addressed by using launched effects for navigation to ensure game state retention.
+    \begin{lstlisting}[language=Kotlin, caption=Fix for Settings Navigation State Loss, label=lst:setting_navigation_fix_code]
+        LaunchedEffect(selectedBoard) {
+            // Only reset game if board type changes
+            if (selectedBoard != currentBoardType) {
+                viewModel.setSelectedBoard(boardType)
+                viewModel.resetGame()
+            }
+        } 
+    \end{lstlisting}
+
+    \item \textbf{Game State Initialization}: Game state not correctly initialized leading to incorrect player scores. Was fixed by ensuring the game state was reset correctly when starting the game.
+    \begin{lstlisting}[language=Kotlin, caption=Fix for Game State Initialization, label=lst:game_state_reset]
+        fun resetGame() = viewModelScope.launch {
+            _showWinDialog.value = false
+            _heldDice.value = emptySet()
+            diceManager.resetGame()
+            statisticsManager.startGameTiming()
+        } 
+    \end{lstlisting}
     \item \textbf{UI Responsiveness}: Some UI elements were unresponsive on certain devices. This was resolved with optimization in UI rendering to render responsive on diverse display dimensions.
    
     \item \textbf{Dice Recognition Accuracy}: Dice value misidentification; fixed by refining the image processing techniques with a min-max normalization of pixel brightness values to enhance pips from backgrounds.
@@ -235,5 +217,4 @@ During application development, valuable insights into performance and usability
 \begin{itemize}
    \item \textbf{Performance Metrics}: A consistent frame rate of 60 FPS during gameplay with single or multiple opponents demonstrates adequate application smoothness.
    \item \textbf{User Feedback}: User testing, conducted across diverse participants, revealed high satisfaction with an average of 4.5 out of 5 in regards to user interface and overall functionality.
-    \item \textbf{Bug Fix Impact}: A 75\% reduction in user-reported issues was reported post fix implementation, confirming positive user and stability benefits after each release.
 \end{itemize}

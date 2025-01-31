@@ -123,8 +123,6 @@
 \addtocontents{toc}{\protect\thispagestyle{empty}}
 \tableofcontents
 
-\listoflistings
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setcounter{pagesWithoutNumbers}{\value{page}}
 \mainmatter
@@ -161,7 +159,9 @@
 
 \input{chapters/08.tex} % Spis skrótów i symboli
 
-\input{chapters/09.tex} % Źródła
+% \input{chapters/09.tex} % Źródła
+\listoflistings
+\addcontentsline{toc}{chapter}{List of Listings}
 
 \input{chapters/10.tex} % Lista dodatkowych plików, uzupełniających tekst pracy
 

@@ -1,0 +1,40 @@
+# Ignore LaTeX auxiliary and log files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.brf
+*.run.xml
+*.nav
+*.snm
+
+# Ignore generated PDFs and other output
+*.dvi
+*.ps
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.bbl
+*.idx
+*.ilg
+*.ind
+*.lof
+*.lol
+*.lot
+
+# Ignore editor backup files
+*~
+*.swp
+*.swo
+
+# Ignore build directories (if using TeX Live or Overleaf)
+_build/
+latex.out/

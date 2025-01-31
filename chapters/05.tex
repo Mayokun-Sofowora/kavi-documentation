@@ -1,4 +1,5 @@
 \chapter{Internal Specification}
+\label{chap:internal-specifications}
 
 This chapter provides a detailed overview of the application's internal workings. It covers the system's concept, architecture, data structures, components, algorithms, design patterns, and relevant UML diagrams.
 
@@ -23,6 +24,68 @@ As illustrated in Figure \ref{fig:mvvm_explanation}, the application is structur
     \item \textbf{Repository Layer}: Manages data access and interactions with external sources. This layer is the gatekeeper for the model layer, accessing and manipulating the models before passing it to the application layer.
     \item \textbf{Model Layer}: Represents the data and domain logic of the application. This layer contains the data entities and business rules. This layer corresponds to the "Model" component of the MVVM pattern.
 \end{itemize}
+
+
+\section{Methodology of Design and Implementation}
+
+The design and implementation of the dice game application follow an iterative and incremental development methodology. This approach involves:
+\begin{enumerate}
+    \item \textbf{Requirement}: Identifying and documenting functional and non-functional requirements.
+    \item \textbf{Design}: Creating architectural and component designs, including UML diagrams to visualize system interactions.
+    \item \textbf{Implementation}: Developing the application in iterative cycles, focusing on one feature or component at a time.
+    \item \textbf{Testing}: Conducting unit, integration, and user acceptance testing to ensure the system meets requirements using JUnit.
+    \item \textbf{Documentation}: Documentation of the implemented features and future development possibilities.
+\end{enumerate}
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[scale=0.45]{img/play.png}
+        \caption{Design Page 1}
+        \label{fig:figma_design1}
+    \end{subfigure}
+    \hspace{0.02\textwidth}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[scale=0.45]{img/stats.png}
+        \caption{Design page 2}
+        \label{fig:figma_design2}
+    \end{subfigure}
+    \caption{Initial UI designs and prototypes created in Figma}
+    \label{fig:figma_designs}
+\end{figure}
+
+\subsection{Design Process}
+The application's design process began with creating detailed wireframes and prototypes in Figma. The designs underwent several iterations based on user feedback and technical constraints, evolving into the final implementation. Figure~\ref{fig:figma_designs} shows some of the initial design concepts and their evolution ~\cite{bib:kavifigma}.
+
+Various existing solutions and design tools inspired the design of the application, one of which stood out was the board screen design was inspired by a dice application project by binaryshrey ~\cite{bib:binaryshrey}. This repository provided a minimalistic and intuitive approach to dice roll applications, which influenced the layout and functionality of the board screen in this project.
+
+\subsection{Model Training}
+
+The dice detection model was developed using Roboflow's platform, which streamlined the entire process from dataset creation to deployment. The training dataset, depicted in Figure~\ref{fig:roboflow_dataset}, consisted of carefully annotated dice images across various conditions, ensuring robust detection performance in real-world scenarios.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{img/roboflow_dataset.jpg}
+    \caption{Roboflow dataset management interface showing dice image annotations}
+    \label{fig:roboflow_dataset}
+\end{figure}
+
+Roboflow facilitated data augmentation and preprocessing, which enhanced the dataset's diversity. The model training and optimization phases were crucial for achieving high accuracy, while the deployment and API integration ensured seamless real-time inference capabilities.
+
+\subsection{Project Timeline}
+
+The project was implemented following a structured timeline as shown in Figure~\ref{fig:gantt}. The development process was organized into major phases, including planning, design, core development, AI integration, and testing, with regular milestones to track progress.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{img/gantt_chart.png}
+    \caption{Project Gantt chart showing development phases and milestones}
+    \label{fig:gantt}
+\end{figure}
+
+This structured approach allowed for continuous improvement and adaptation to changing requirements, ensuring a high-quality application. While some initially planned features like AR implementation were identified as future enhancements, the focus remained on delivering a robust core game experience with AI capabilities.
 
 \section{Data Structures and Data Management}
 
@@ -240,3 +303,4 @@ The analytics flow, shown in Figure \ref{fig:analysis_flow}, illustrates the ste
 \end{figure}
 
 % When the player opens the `StatisticsScreen`, the `AnalyticsDashboard` is initialized. The `AnalyticsDashboard` then collects the `gameStatistics` from the `StatisticsManager`, which uses the `DataStore` to load the stored statistics. The `StatisticsManager` then calculates various metrics, and updates the `AnalyticsDashboard` with the latest information. The player can also view detailed metrics on the `AnalyticsDashboard`. If the player chooses to clear the statistics, then the `StatisticsManager` will use the `DataStore` and the `StatisticsRepository` to reset the stored data.
+
