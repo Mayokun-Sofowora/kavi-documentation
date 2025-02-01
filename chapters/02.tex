@@ -25,7 +25,6 @@ Functional requirements define the specific behavior and functions of the system
     \item {\bfseries Image Recognition}: The system should accurately detect and recognize physical dice through the device camera, detecting dice faces in real-time and accurately recognizing pip values.
 \end{enumerate}
 
-
 \section{Non-functional Requirements}
 Non-functional requirements are essential for ensuring the quality and performance of the system. They help address issues such as latency, scalability, usability, reliability, and security. For the application, the following non-functional requirements are identified:
 \begin{enumerate}
@@ -38,83 +37,68 @@ Non-functional requirements are essential for ensuring the quality and performan
 \section{Use Case Modelling}
 Use cases describe how users interact with the system, illustrated using UML diagrams that visualize user interactions and the application's features.
 
-\begin{figure}[h]
+\subsubsection{Main Menu Use Case}
+Upon launching the application, users encounter the main menu, which serves as the central hub for interaction. This interface provides access to various game modes, settings, player statistics, and instructional materials, as shown in Figure~\ref{fig:main_menu_usecase}.
+
+\begin{figure}[ht!]
     \centering
     \includesvg[scale=0.9]{uml/render/main_menu_usecase.svg}
-    \caption{Use case for the game's main menu.}
+    \caption{Use case diagram for the game's main menu.}
     \label{fig:main_menu_usecase}
 \end{figure}
 
-\begin{figure}[h]
-    \centering
-    \includesvg[scale=0.7]{uml/render/game_usecase.svg}
-    \caption{Use case for the game's core gameplay.}
-    \label{fig:game_usecase}
-\end{figure}
-
-\subsubsection{Main Menu Use Case}
-
-Upon launching the application, users encounter the main menu, the central hub for interaction. This interface offers access to various game modes, settings, statistics, and instructional materials. The main menu serves as the gateway to core functionalities that shape the user experience.
-
-Users can start a new game by selecting either the classic or custom game mode, allowing them to engage with predefined rules or define their own gameplay mechanics. Additionally, users can view detailed player statistics, offering insights into their performance, achievements, and progress over multiple sessions. Users can also view the settings menu which allows players to configure game parameters such as difficulty level, audio preferences, and visual themes. For guidance, the game rules and instructions provide an accessible reference for understanding game mechanics and strategies. Furthermore, the menu integrates virtual dice detection, enabling users to interact with real-world dice through image recognition. Table~\ref{tab:main_menu_usecase} summarizes the key interactions available in the main menu.
+Users can start a new game by selecting either the classic or custom game mode, allowing them to engage with predefined rules or configure their own gameplay mechanics. The statistics menu provides insights into player performance, including past game results and analysis. The settings menu enables players to configure parameters such as difficulty level, audio preferences, and visual themes. Additionally, the game rules and instructions section offers a reference for understanding mechanics and strategies. The application also integrates virtual dice recognition, enabling users to interact with real-world dice using image recognition. Table~\ref{tab:main_menu_usecase} summarizes the key interactions available in the main menu.
 
 \begin{table}[ht!]
     \centering
-    \begin{tabular}{|l|p{10cm}|}
+    \begin{tabular}{|l|p{12cm}|}
         \hline
         \textbf{Actor} & \textbf{Description} \\
         \hline
-        Player & Start Game: Initiates gameplay by selecting either classic or custom game modes. \\
+               & \textbf{Start Game}: Initiates gameplay by selecting either classic or custom game modes. \\
+               & \textbf{Show Settings}: Provides access to customization options, including difficulty levels and interface preferences. \\
+        Player & \textbf{Show Instructions}: Displays an overview of game mechanics and rules. \\
+               & \textbf{Show Statistics}: Enables users to track their performance and game history. \\
+               & \textbf{View Player Analysis}: Provides in-depth statistics on past games, allowing players to analyze trends and optimize strategies. \\
         \hline
-        Player & Show Settings: Provides access to customization options, including difficulty levels and interface preferences. \\
-        \hline
-        Player & Show Instructions: Displays an overview of game mechanics and rules for user reference. \\
-        \hline
-        Player & Show Statistics: Enables users to track their performance and game history. \\
-        \hline
-        Player & View Player Analysis: Offers in-depth statistics on past games, allowing players to analyze trends and optimize strategies. \\
-        \hline
-    \end{tabular}
+    \end{tabular}    
     \caption{Main Menu Use Case Interactions}
     \label{tab:main_menu_usecase}
 \end{table}
 
 \subsubsection{Game Use Case}
+The game system encapsulates core gameplay mechanics, allowing players to engage in dice-based games in both physical and digital formats. Players roll dice, make strategic decisions, and compete against AI opponents that use heuristic probability to optimize their moves, as shown in Figure~\ref{fig:game_usecase}.
 
-The game system encapsulates core gameplay mechanics, providing an interactive experience where players can engage with dice-based games in both physical and digital formats. The gameplay revolves around rolling dice, making strategic decisions, and competing against AI opponents, which introduces an element of challenge and unpredictability.
+\begin{figure}[ht!]
+    \centering
+    \includesvg[scale=0.7]{uml/render/game_usecase.svg}
+    \caption{Use case diagram for the game's core gameplay.}
+    \label{fig:game_usecase}
+\end{figure}
 
 \begin{table}[ht!]
     \centering
-    \begin{tabular}{|l|p{10cm}|}
+    \begin{tabular}{|l|p{12cm}|}
         \hline
         \textbf{Actor} & \textbf{Description} \\
         \hline
-        Player & Play Classic Game: Engage in traditional dice games with predefined rules. \\
+               & \textbf{Play Classic Game}: Engage in traditional dice games with predefined rules. \\
+               & \textbf{Play Custom Game}: Define custom rules and gameplay parameters. \\
+               & \textbf{Roll Dice}: Roll dice manually or use virtual dice detection. \\
+               & \textbf{Hold Dice}: Select specific dice to keep for strategic advantage. \\
+        Player & \textbf{Bank Score}: Secure points to prevent potential losses. \\
+               & \textbf{Earn Achievements}: Unlock rewards for reaching milestones. \\
+               & \textbf{Use Virtual Mode}: Detect and capture dice roll results using image recognition. \\
+               & \textbf{Detect Dice Values}: Process dice images to identify pips and determine values. \\
         \hline
-        Player & Play Custom Game: Define custom rules and gameplay parameters. \\
+        AI & \textbf{Make Strategic Decisions}: Use heuristic probability to evaluate the game state and optimize moves. \\
         \hline
-        Player & Roll Dice: Facilitates rolling dice either manually or through virtual detection. \\
-        \hline
-        Player & Hold Dice: Enables holding specific dice to optimize strategy. \\
-        \hline
-        Player & Bank Score: Secure points and prevent potential losses. \\
-        \hline
-        Player & Earn Achievements: Rewards for reaching milestones and completing challenges. \\
-        \hline
-        Player & Use Virtual Mode: Integrates augmented reality for real-world dice detection. \\
-        \hline
-        Player & Capture Dice Image: Enables dice roll capture via image recognition. \\
-        \hline
-        Player & Detect Dice Values: Processes dice images and updates game states accordingly. \\
-        \hline
-        AI & Make Strategic Decisions: Evaluates game conditions to make optimal moves. \\
-        \hline
-    \end{tabular}
+    \end{tabular}    
     \caption{Game Use Case Interactions}
     \label{tab:game_usecase}
 \end{table}
 
-Players can roll dice using the virtual interface or capture dice rolls via image recognition, allowing seamless integration between physical and digital gaming experiences. During gameplay, players can choose to hold specific dice to optimize their strategy or bank points to secure their score. AI opponents actively participate by making decisions based on game state and probability calculations, creating a competitive and dynamic environment. Table~\ref{tab:game_usecase} presents the key interactions in the game system.
+Players can roll dice using the virtual interface or capture real dice rolls via image recognition, enabling seamless integration between physical and digital gameplay. During a turn, players can choose to hold specific dice to refine their strategy or bank points to secure their score. AI opponents analyze game conditions using heuristic probability to make strategic decisions, adding challenge and unpredictability to the gameplay. Table~\ref{tab:game_usecase} outlines the primary interactions within the game system.
 
 \section{Description of Tools and Technologies}
 
@@ -148,7 +132,7 @@ Jetpack Compose is a modern toolkit for building native Android UI, offering a d
 
 \subsubsection{Dagger-Hilt}
 \label{sec:daggerhilt}
-Dagger-Hilt is a dependency injection library for Android that simplifies the setup and management of dependencies in Android applications. Dagger-Hilt was used in this project because it greatly reduces boilerplate code related to dependency injection, improving code modularity and making the project more testable. This is especially important for larger projects, allowing for more structured and organised code. It allows the application to easily scale, and can help with long-term maintainability~\cite{bib:daggerhilt}.
+Dagger-Hilt is a dependency injection library for Android that simplifies the setup and management of dependencies in Android applications. Dagger-Hilt was used in this project because it greatly reduces boilerplate code related to dependency injection, improving code modularity and making the project more testable. This is especially important for larger projects, allowing for more structured and organized code. It allows the application to easily scale, and can help with long-term maintainability~\cite{bib:daggerhilt}.
 
 \subsubsection{Lottie Animation}
 \label{sec:lottie}
@@ -160,7 +144,7 @@ Vico Charts is a library for creating interactive and customizable charts in And
 
 \subsubsection{Timber}
 \label{sec:timber}
-Timber is a logging library for Android that provides a simple and flexible API for logging messages, making it easier to manage log output in Android applications. Timber was used for logging in this project to simplify and standardise the process of logging events and debugging information. Timber removes the clutter that comes from logging, and offers an elegant and easily readable interface and functionality for developers, thereby aiding in debugging and monitoring the application’s behavior~\cite{bib:timber}.
+Timber is a logging library for Android that provides a simple and flexible API for logging messages, making it easier to manage log output in Android applications. Timber was used for logging in this project to simplify and standardize the process of logging events and debugging information. Timber removes the clutter that comes from logging, and offers an elegant and easily readable interface and functionality for developers, thereby aiding in debugging and monitoring the application’s behavior~\cite{bib:timber}.
 
 \subsubsection{JUnit 5}
 \label{sec:junit}

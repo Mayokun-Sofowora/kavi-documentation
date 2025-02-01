@@ -4,7 +4,6 @@
 left to right direction
 
 ' General styling
-'skinparam packageStyle node
 skinparam Padding 1
 skinparam ParticipantPadding 0
 skinparam ComponentPadding 0
@@ -25,20 +24,20 @@ package "Managers" #LightYellow {
 
     class DiceManager
     class DataStoreManager
-    class StatisticsManager
     class SettingsManager
     class ShakeDetectorManager
+    class StatisticsManager
 }
 
 ' Models
 package "Models" #LightGray {
     class GameState
-    class GameStatistics
     class PlayerAnalysis
     class DecisionPatterns
     class WinRate
     class TimeMetrics
     class DiceDetectionResult
+    class GameStatistics
 }
 
 ' ViewModels
@@ -50,9 +49,6 @@ package "ViewModels" #LightCyan {
 
 ' Data Components
 package "Data Components" #LightBlue {
-    interface StatisticsRepository
-    class StatisticsRepositoryImpl implements StatisticsRepository
-
     interface RoboflowRepository
     class RoboflowRepositoryImpl implements RoboflowRepository
 }
@@ -64,29 +60,23 @@ GameViewModel --> PigGameManager : "Use"
 GameViewModel --> GreedGameManager : "Use"
 GameViewModel --> BalutGameManager : "Use"
 GameViewModel --> DiceManager : "Roll"
-GameViewModel --> StatisticsManager : "Analyze"
 GameViewModel --> SettingsManager : "Access"
 GameViewModel --> ShakeDetectorManager : "Detect"
 
-StatisticsManager --> StatisticsRepository : "Store"
-StatisticsRepositoryImpl --> GameStatistics : "Provide"
-StatisticsRepositoryImpl --> PlayerAnalysis : "Analyze"
-StatisticsRepositoryImpl --> DecisionPatterns : "Predict"
-StatisticsRepositoryImpl --> WinRate : "Calculate"
-StatisticsRepositoryImpl --> TimeMetrics : "Track"
-
 DetectionViewModel --> DiceDetectionResult : "Detect"
 DetectionViewModel --> RoboflowRepository : "Use"
-RoboflowRepositoryImpl --> DiceDetectionResult : "Analyze"
+RoboflowRepositoryImpl -> DiceDetectionResult : "Analyze"
 
-MyGameManager --> GameState : "Manage"
-PigGameManager --> GameState : "Manage"
-GreedGameManager --> GameState : "Manage"
-BalutGameManager --> GameState : "Manage"
+MyGameManager -> GameState : "Manage"
+PigGameManager -> GameState : "Manage"
+GreedGameManager -> GameState : "Manage"
+BalutGameManager -> GameState : "Manage"
 
-MyGameManager --> PlayerAnalysis : "Analyze"
-PigGameManager --> PlayerAnalysis : "Analyze"
-GreedGameManager --> PlayerAnalysis : "Analyze"
-BalutGameManager --> PlayerAnalysis : "Analyze"
+' Updated relationships for statistics tracking
+StatisticsManager -> DecisionPatterns : "Use"
+StatisticsManager -> GameStatistics : "Track"
+GameStatistics --> WinRate : "Compute"
+GameStatistics --> PlayerAnalysis : "Analyze"
+PlayerAnalysis --> TimeMetrics : "Measure"
 
 @enduml

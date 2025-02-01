@@ -41,7 +41,7 @@ The implementation of accurate dice recognition presents several technical chall
 
 \subsection{Image Preprocessing}
 
-The system employs a sophisticated preprocessing pipeline that enhances image quality for more accurate recognition:
+The system employs a sophisticated preprocessing pipeline that enhances image quality for more accurate recognition, this is illustrated in Listing ~\ref{lst:image_preprocess}:
 \begin{lstlisting}[language=Kotlin, caption={Image Preprocessing Pipeline}, label=lst:image_preprocess]
     private suspend fun preprocessImage(bitmap: Bitmap): Bitmap {
         return withContext(Dispatchers.Default) {
@@ -73,9 +73,12 @@ The system employs a sophisticated preprocessing pipeline that enhances image qu
 
 The dice recognition system leverages a pre-trained object detection model from Roboflow~\cite{bib:kavidataset}. The model processes images at 640x640 resolution and was trained on a custom dataset of 250 images, supporting six distinct classes representing dice faces 1-6. Developed and hosted on Roboflow's platform, it provides efficient object detection capabilities through their API service.
 
-The model is then accessed through Roboflow's Hosted Inference API, with preprocessing handling:
+The model is then accessed through Roboflow's Hosted Inference API, with preprocessing handling as shown in Listing ~\ref{lst:image_preprocess}.
+
+The preprocessing pipeline starts by converting the image to RGB format to standardize color space, then contrasts enhancement and lighting normalization to improve visibility, particularly under varying conditions. The image is then resized while preserving its aspect ratio to maintain recognition accuracy, then noise reduction removes unwanted artifacts that could interfere with recognition, especially in suboptimal conditions. If preprocessing fails, the system defaults to basic scaling to ensure usability.
+
 \begin{itemize}
-    \item RGB format conversion
+    \item RGB format conversion: 
     \item Image scaling to the required 640x640 dimensions
     \item Confidence threshold (set at 0.4 for reliable detections)
 \end{itemize} 
@@ -166,7 +169,7 @@ fun rollDice() {
 }
 \end{lstlisting}
 
-In this example, the \texttt{rollDice} function is designed to manage the dice-rolling process within the game. It is executed within a coroutine scope using \texttt{viewModelScope.launch}, which allows it to perform asynchronous operations without blocking the main thread. This ensures that the UI remains responsive while the dice are being rolled.
+In Listing ~\ref{lst:suspend_function}, the \texttt{rollDice} function is designed to manage the dice-rolling process within the game. It is executed within a coroutine scope using \texttt{viewModelScope.launch}, which allows it to perform asynchronous operations without blocking the main thread. This ensures that the UI remains responsive while the dice are being rolled.
 
 The function begins by checking if a roll is already in progress or if rolling is not allowed, returning early if either condition is true. This prevents unnecessary operations and ensures that the game logic is executed only when appropriate.
 
@@ -220,38 +223,55 @@ The scoring algorithm plays a crucial role in determining the outcome of the gam
 \subsection{Adaptive AI}
 \label{subsec:adaptive_ai}
 
-In the game, the Adaptive AI simulates a dynamic and intelligent opponent, making strategic decisions based on the player's play style and the current game state.  Its primary role is to evaluate game conditions and adapt its behavior accordingly. The AI is integrated into different parts of the gameplay, including the classic games of \emph{Pig}, \emph{Greed}, and \emph{Balut}.
+In the game, the Adaptive AI simulates a dynamic and intelligent opponent that makes strategic decisions based on the player's play style and the current game state. The AI is integrated into different parts of the gameplay, including the classic games of \emph{Pig}, \emph{Greed}, and \emph{Balut}.
 
-In \emph{Balut}, when it's the AI's turn, it decides whether to roll, hold, or bank dice based on the current game state.  The AI considers factors such as the values of the dice, potential scores for different categories, and the number of rolls remaining.  This decision-making process is implemented through the \texttt{handleAITurn} function, where the AI selects a category to score or decides which dice to hold for the next roll.
+In the game of \emph{Balut}, when it is the AI's turn, it must decide whether to roll, hold, or bank dice based on the current game state. This decision-making process is implemented in the \texttt{handleAITurn} function. In the game of \emph{Greed}, the AI determines which dice combinations to keep after each roll, aiming to maximize its score while minimizing risk. Meanwhile, in the game of \emph{Pig}, the AI's decision to roll or bank is influenced by both the current score and the opponent's score, as well as the overall target score. Throughout these games, a game tracker records the AI's decisions, allowing for continuous refinement of its behavior.
 
-The AI's strategy in \emph{Greed} involves deciding which dice combinations to keep after each roll to maximize its score while minimizing the risk of losing accumulated points.  It evaluates the potential scores of different combinations and the probabilities of rolling specific values.
+\subsubsection{The \texttt{handleAITurn} Function}
 
-In \emph{Pig}, the AI's decision to roll or bank is influenced by its current score, the target score, and the player's score.  The AI takes calculated risks based on these factors, aiming to reach the target score before the player. It balances the potential reward of accumulating more points with the risk of rolling a 1 and losing all unbanked points.
+The \texttt{handleAITurn} function in the game of \emph{Balut} guides the AI's actions during its turn. It considers factors such as the number of rolls remaining, the values of the dice, and the potential scores of different categories. Depending on the game state, the AI either selects a category to score (when no rolls are left) or decides which dice to hold for the next roll. The Listing ~\ref{lst:ai_turn_function}  illustrates the function:
 
 \begin{lstlisting}[language=Kotlin, caption={handleAITurn Function}, label=lst:ai_turn_function]
-private fun handleAITurn(
-    diceResults: List<Int>, currentState: BalutScoreState
-): BalutScoreState {
-    gameTracker.trackDecision()
-    if (currentState.rollsLeft <= 0) {
-        // AI chooses a category
-        val category = chooseAICategory(diceResults, currentState)
-        gameTracker.trackBanking(ScoreCalculator.calculateCategoryScore(diceResults, category))
-        return scoreCategory(currentState, diceResults, category)
+    private fun handleAITurn(
+        diceResults: List<Int>, currentState: BalutScoreState
+    ): BalutScoreState {
+        gameTracker.trackDecision()
+        if (currentState.rollsLeft <= 0) {
+            // AI chooses a category
+            val category = chooseAICategory(diceResults, currentState)
+            gameTracker.trackBanking(ScoreCalculator.calculateCategoryScore(diceResults, category))
+            return scoreCategory(currentState, diceResults, category)
+        }
+
+        // AI decides which dice to hold
+        gameTracker.trackRoll()
+        val diceToHold = decideAIDiceHolds(diceResults)
+
+        return currentState.copy(
+            rollsLeft = currentState.rollsLeft - 1,
+            heldDice = diceToHold
+        )
     }
-
-    // AI decides which dice to hold
-    gameTracker.trackRoll()
-    val diceToHold = decideAIDiceHolds(diceResults)
-
-    return currentState.copy(
-        rollsLeft = currentState.rollsLeft - 1,
-        heldDice = diceToHold
-    )
-}
 \end{lstlisting}
 
-The decision-making process is made with a game tracker, which records AI decisions for further analysis. This allows easy fine-tuning of the AI, ensuring it provides both a challenging and fair opponent.
+\subsubsection{The \texttt{shouldAIBank} Function}
+
+In the game of \emph{Pig}, the AI's decision to bank its current turn score is partly influenced by the observed play style of the human player. By analyzing the player's tendencies, the AI adjusts its probability to bank, either taking more risks or playing it safe. The Listing ~\ref{lst:player_style_adjustment} shows how the AI adjusts its banking strategy based on the player's style:
+
+\begin{lstlisting}[language=Kotlin, caption={Player Style Adjustment}, label=lst:player_style_adjustment]
+    val playerAnalysis = statisticsManager.playerAnalysis.value
+    val playerStyle = playerAnalysis?.playStyle ?: PlayStyle.BALANCED
+
+    // Adjust based on player style
+    val styleAdjustment = when (playerStyle) {
+        PlayStyle.AGGRESSIVE -> -0.1
+        PlayStyle.CAUTIOUS -> 0.1
+        else -> 0.0
+    }
+\end{lstlisting}
+
+The system first retrieves the player's analysis from the statistics manager, determining the player's style. If no analysis is available, it defaults to \texttt{BALANCED}. Using a \texttt{when} expression, the code assigns a \texttt{styleAdjustment} value. For \texttt{AGGRESSIVE} players, this results in a negative adjustment, causing the AI to bank less frequently and take greater risks. For \texttt{CAUTIOUS} players, the adjustment is positive, encouraging the AI to secure its points more readily. This approach allows the AI to dynamically adapt its strategy based on the opponent's behavioral tendencies, enhancing both the challenge and adaptability of the gameplay.
+
 
 \subsection{Game Mechanics}
 

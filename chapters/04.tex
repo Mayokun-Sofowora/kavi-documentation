@@ -39,7 +39,7 @@ To install the application for debugging purposes, these procedures should be fo
 \begin{enumerate}
     \item \textbf{Clone the Repository}: Start by cloning the project repository from GitHub.
     \begin{verbatim}
-        git clone https://github.com/Mayokun-Sofowora/kavi.git
+    git clone https://github.com/Mayokun-Sofowora/kavi.git
     \end{verbatim}
     \item \textbf{Open in Android Studio}: Launch Android Studio and open the cloned project.
     \item \textbf{Sync Gradle Dependencies}: Allow Android Studio to sync the Gradle dependencies automatically.
@@ -66,7 +66,7 @@ In addition to the instructions provided, be sure that:
 \subsection{Navigating the App}
 
 When starting the game, users are welcomed with a splash screen that displays the application's logo in figure~\ref{fig:splash_screen}. After a short moment, the main menu is shown in figure~\ref{fig:main_menu}. The main menu provides navigation options to access the different features of the application.
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{0.27\textwidth}
         \centering
@@ -89,7 +89,7 @@ When starting the game, users are welcomed with a splash screen that displays th
 
 The interface allows users to navigate to different sections of the application, such as the classic boards to play the classic dice games or the virtual screen to use the image recognition feature. The figure~\ref{fig:interface_mode} shows the navigation options available.
 
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{0.27\textwidth}
         \includegraphics[width=\textwidth]{img/virtual mode.png}
@@ -122,7 +122,7 @@ Once granted, the camera feed will be displayed on screen. Users can position th
 
 The application offers a diverse set of game boards, each designed for a distinct dice game experience. These games range from simple "press-your-luck" scenarios to more strategic challenges that require planning and risk management. The primary games offered are \emph{Pig}, \emph{Greed}, and \emph{Balut}. Additionally, the application includes a custom board where users can define their own game rules and scoring mechanisms, and also select the number of dice used in the game.  Figure~\ref{fig:board_screen} shows the classic boards available in the application.  These games feature an adaptive AI opponent that adjusts its strategy based on the player's performance and the specific game rules.  For a detailed explanation of the AI's behavior in each game, see Section~\ref{subsec:adaptive_ai}.
 
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{0.27\textwidth}
         \includegraphics[width=\textwidth]{img/balut board.png}
@@ -243,7 +243,7 @@ The instructions screen provides users with detailed guidance on how to play the
 \subsection{Settings}
 The settings screen, on the other hand, allows users to customize their gaming experience, such as enabling vibration, the shake-to-roll function, and board color customization. The settings screen is shown in Figure~\ref{fig:settings_screen}.
 
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{0.27\textwidth}
         \centering
@@ -264,7 +264,7 @@ The settings screen, on the other hand, allows users to customize their gaming e
 \subsection{Statistics}
 
 The statistics screen offers users comprehensive insights into their gameplay performance. It displays a variety of data, including win records, average scores, and other pertinent metrics. The figure~\ref{fig:statistics_screen} illustrates the statistics screen, where users can view their achievements, such as "High Roller," "Lightning Fast," and "Greed Guru." Additionally, users can assess their risk-taking tendencies, current winning streaks, comebacks, and close games. The screen also features time analytics, allowing users to track their fastest games, total playtime, and time spent on individual games, providing a detailed overview of their gaming habits.
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{0.27\textwidth}
         \includegraphics[width=\textwidth]{img/statistics screen.png}
@@ -302,26 +302,27 @@ Regular maintenance of the application is essential to ensure it remains functio
 Careful management of the application data is critical to ensure its proper functioning.  The developers are responsible for \textit{DataStore Management}, which involves taking periodic backups of application settings and user preferences stored with Android DataStore. The data is also cleaned periodically to ensure that the device is not using unnecessary storage. This is essential to maintain consistency and avoid potential data corruption or data loss.
 
 \section{Security Issues}
-This section provides a detailed view of the various security issues that the application is vulnerable to, based on potential threats and exploitable areas.  It also discusses how the application addresses these risks, along with planned future enhancements to further bolster security.  While perfect security is unattainable, the application strives to minimize risks and protect user data through a combination of best practices and robust security measures.
+This section provides a detailed overview of the various security risks that the application may be vulnerable to, based on potential threats and exploitable areas. It also discusses the implemented security measures and planned future improvements to enhance protection. While absolute security is unattainable, the application aims to minimize risks and safeguard user data through best practices and robust security mechanisms.
 
 \subsection{Data Handling}
+Application data, including DataStore backups, could be accessed through Android's backup services if a user's Google account is compromised. An attacker may gain unauthorized access if a user falls victim to \textit{phishing}\footnote{Phishing is a type of cyber attack where attackers impersonate legitimate organizations to trick users into revealing sensitive information, such as passwords or financial details.}, a \textit{data breach}, or other attack vectors.
 
-Application data, including DataStore backups, might be accessed through Android's backup services if a user's Google account is compromised. Specifically, an attacker might gain access if a user's Google account has been \textit{phished}, compromised through a \textit{data breach}, or other means.
 
-A compromised Google account could allow access to backups stored in Google Drive, potentially revealing user information stored in the application.  To mitigate this, the application employs Android's KeyStore to encrypt the backup data. While this adds a layer of protection, it's not a foolproof solution and doesn't guarantee complete protection against unauthorized access~\cite{bib:android_data_backup}.  Future enhancements, such as user authentication and stricter access controls, are planned to further enhance data security.
+A compromised Google account could expose backups stored in Google Drive, potentially revealing sensitive user information. To mitigate this risk, the application employs Android's KeyStore to encrypt backup data. While this provides an added layer of security, it does not guarantee complete protection against unauthorized access~\cite{bib:android_data_backup}. Future improvements include implementing user authentication mechanisms and stricter access controls to further enhance data security.
 
-\subsection{Communication and API}
-Even with HTTPS, attackers can potentially intercept data during transmission to the RoboFlow API, especially if on the same network.  A malicious server could be used to redirect API requests. While the application enforces HTTPS, it currently doesn't use certificate pinning, making it susceptible to \textit{man-in-the-middle} attacks. This is a planned future enhancement~\cite{bib:owasp_top_ten}.
+\subsection{Communication and API Security}
+Even with HTTPS, data transmitted to the RoboFlow API could be intercepted by attackers, particularly if they are on the same network. Additionally, a malicious server could redirect API requests, exposing sensitive data. While the application enforces HTTPS, it currently does not utilize certificate pinning, making it susceptible to \textit{man-in-the-middle} attacks. Implementing certificate pinning is a planned security enhancement~\cite{bib:owasp_top_ten}.  
 
-Rate-limiting is implemented using a `CoroutineScope` and a `MutableStateFlow` to limit API call frequency, reducing the risk of application crashes due to excessive requests. Input validation helps prevent \textit{API abuse}. However, sophisticated attackers might bypass these measures.  Ongoing efforts focus on strengthening input validation and exploring more robust rate-limiting strategies.
+Rate-limiting mechanisms are in place using a `CoroutineScope` and a `MutableStateFlow` to prevent excessive API calls and reduce the risk of application crashes. Input validation is also in place to mitigate \textit{API abuse}. Ongoing efforts focus on further strengthening input validation and implementing more robust rate-limiting techniques.
 
 \subsection{Code Security}
+Despite the use of code obfuscation, attackers can still reverse engineer the application to extract sensitive information, such as private API keys, or analyze the game logic to develop cheating mechanisms. Code obfuscation is a technique that makes source code more difficult to read and understand by modifying variable names, class structures, and other elements.
 
-Even when using code obfuscation, attackers can still reverse engineer the code to steal private information and private API keys, or understand the game logic. Code Obfuscation is the process of making the code more difficult to read and understand, by changing the variable names, and classes to make them unreadable.
+Attackers may decompile the application to uncover API keys used for external resources or exploit the game logic to create automated cheating bots. 
 
-An attacker can decompile the application to find API keys that are used to contact external resources, or understand the game logic to make a bot to cheat at the game.
+The application leverages R8's obfuscation process to obscure the code and hinder reverse engineering attempts. However, this is not a foolproof solution, as sophisticated attackers may still deobfuscate~\footnote{Deobfuscation is the process of removing obfuscation from computer code, making it readable and understandable by humans. Obfuscation deliberately conceals or distorts parts of the code to make the program difficult to detect, tamper with, or reverse engineer.} and analyze the code~\cite{bib:android_obfuscation}. Future enhancements include stronger key management strategies and additional security layers to protect sensitive application logic.
+% ~\cite{bib:nordvpn_deobfuscate}
 
-The application uses code obfuscation through R8's obfuscation process, to hide the code logic, which is not a full solution, and can be bypassed by sophisticated attackers \cite{bib:android_obfuscation}.
 
 \section{Security Considerations}
 
@@ -354,42 +355,52 @@ The following security enhancements are considered for future development:
 
 \section{Working scenarios}
 
-In addition to the scenarios described in the user manual \ref{sec:user_manual}, this section provides a few practical examples of application usage.
-
-\begin{figure}[h]
-    \centering
-    \begin{subfigure}[b]{0.27\textwidth}
-        \includegraphics[width=\textwidth]{img/greed board2.png}
-        \caption{Exiting a game of Greed}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.27\textwidth}
-        \includegraphics[width=\textwidth]{img/pig board2.png}
-        \caption{Loosing a Game of Pig}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.27\textwidth}
-        \includegraphics[width=\textwidth]{img/pig board3.png}
-        \caption{Winning a Game of Pig}
-    \end{subfigure}
-    \caption{Board Features in the Application}
-\end{figure}
+In addition to the scenarios described in the user manual ~\ref{sec:user_manual}, this section provides a few practical examples of application usage.
 
 \begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{0.27\textwidth}
-        \includegraphics[width=\textwidth]{img/custom game.jpg}
-        \caption{Custom Game Board}
+        \includegraphics[width=\textwidth]{img/virtual screen.jpg}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.27\textwidth}
         \includegraphics[width=\textwidth]{img/virtual screen2.jpg}
-        \caption{Image Recognition Example}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.27\textwidth}
-        \includegraphics[width=\textwidth]{img/virtual screen.jpg}
-        \caption{Image Recognition Example 2}
+        \includegraphics[width=\textwidth]{img/virtual screen3.jpg}
+    \end{subfigure}   
+    \caption{Image Recognition of Dice. The images show the application’s ability to recognize dice in the environment, along with the corresponding labels indicating the recognized dice classes.}
+\end{figure}
+
+
+\begin{figure}[ht!]
+    \centering
+    \begin{subfigure}[b]{0.26\textwidth}
+        \includegraphics[width=\textwidth]{img/custom game2.jpg}
+    \end{subfigure} 
+    \hspace{.5em}
+    \begin{subfigure}[b]{0.26\textwidth}
+        \includegraphics[width=\textwidth]{img/custom game.jpg}
     \end{subfigure}
-    \caption{Additional Features and Interactions}
+    \caption{Custom Game Board allowing users to personalize their game settings}
+\end{figure}
+
+\begin{figure}[ht!]
+    % \centering
+    \begin{subfigure}[b]{0.27\textwidth}
+        \includegraphics[width=\textwidth]{img/pig board3.png}
+        \caption{Winning a Game of Pig with the final score displayed on the board}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.27\textwidth}
+        \includegraphics[width=\textwidth]{img/pig board2.png}
+        \caption{Losing a Game of Pig, showing the end game scenario}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.27\textwidth}
+        \includegraphics[width=\textwidth]{img/greed board2.png}
+        \caption{Exiting a game of Greed after finalizing the score}
+    \end{subfigure}
+    \caption{Board Features and Game Scenarios}
 \end{figure}

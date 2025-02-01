@@ -7,7 +7,6 @@ actor Player
 participant "StatisticsScreen" as StatsUI
 participant "AnalyticsDashboard" as Dashboard
 participant "StatisticsManager" as Stats
-participant "StatisticsRepository" as Repo
 participant "DataStore" as Store
 
 Player -> StatsUI: View Statistics
@@ -49,7 +48,6 @@ alt Clear Statistics
     StatsUI -> Stats: clearAllData()
     activate Stats
     Stats -> Store: Clear stored data
-    Stats -> Repo: clearUserStatistics()
     Stats -> Stats: Reset local state
     deactivate Stats
 end

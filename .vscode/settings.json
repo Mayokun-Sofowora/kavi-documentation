@@ -40,7 +40,9 @@
     "endignore",
     "inkscapelatex",
     "Leaderboard",
-    "MVVM"
+    "Lottie",
+    "MVVM",
+    "Vico"
   ],
 
   "latex-workshop.latex.clean.fileTypes": [

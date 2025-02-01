@@ -31,7 +31,7 @@ package "kavi" {
         }
         
         package "repository" {
-            note "RoboflowRepository\nStatisticsRepository" as N4
+            note "RoboflowRepository" as N4
         }
         
         package "service" {

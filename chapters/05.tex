@@ -14,7 +14,7 @@ The project's architecture follows the modern Model-View-ViewModel (MVVM) patter
     \label{fig:mvvm_explanation}
 \end{figure}
 
-As illustrated in Figure \ref{fig:mvvm_explanation}, the application is structured into several layers:
+As shown in Figure ~\ref{fig:mvvm_explanation}, the application is structured into several layers:
 
 \begin{itemize}
     \item \textbf{Application Layer}: Contains the main application logic and navigation.
@@ -37,7 +37,7 @@ The design and implementation of the dice game application follow an iterative a
     \item \textbf{Documentation}: Documentation of the implemented features and future development possibilities.
 \end{enumerate}
 
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
@@ -57,15 +57,15 @@ The design and implementation of the dice game application follow an iterative a
 \end{figure}
 
 \subsection{Design Process}
-The application's design process began with creating detailed wireframes and prototypes in Figma. The designs underwent several iterations based on user feedback and technical constraints, evolving into the final implementation. Figure~\ref{fig:figma_designs} shows some of the initial design concepts and their evolution ~\cite{bib:kavifigma}.
+The application's design process began with creating detailed wireframes and prototypes in Figma. The designs underwent several iterations based on user feedback and technical constraints, evolving into the final implementation. Figure~\ref{fig:figma_designs} shows some of the initial design concepts and their evolution~\cite{bib:kavifigma}.
 
-Various existing solutions and design tools inspired the design of the application, one of which stood out was the board screen design was inspired by a dice application project by binaryshrey ~\cite{bib:binaryshrey}. This repository provided a minimalistic and intuitive approach to dice roll applications, which influenced the layout and functionality of the board screen in this project.
+Various existing solutions and design tools inspired the design of the application, one of which stood out was the board screen design was inspired by a dice application project by binaryshrey~\cite{bib:binaryshrey}. This repository provided a minimalistic and intuitive approach to dice roll applications, which influenced the layout and functionality of the board screen in this project.
 
 \subsection{Model Training}
 
-The dice detection model was developed using Roboflow's platform, which streamlined the entire process from dataset creation to deployment. The training dataset, depicted in Figure~\ref{fig:roboflow_dataset}, consisted of carefully annotated dice images across various conditions, ensuring robust detection performance in real-world scenarios.
+The dice detection model was developed using Roboflow's platform, which streamlined the entire process from dataset creation to deployment. The training dataset, shown in Figure~\ref{fig:roboflow_dataset}, consisted of carefully annotated dice images across various conditions, ensuring robust detection performance in real-world scenarios.
 
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \includegraphics[width=\textwidth]{img/roboflow_dataset.jpg}
     \caption{Roboflow dataset management interface showing dice image annotations}
@@ -76,9 +76,9 @@ Roboflow facilitated data augmentation and preprocessing, which enhanced the dat
 
 \subsection{Project Timeline}
 
-The project was implemented following a structured timeline as shown in Figure~\ref{fig:gantt}. The development process was organized into major phases, including planning, design, core development, AI integration, and testing, with regular milestones to track progress.
+The project was implemented following a structured timeline as shown in Figure ~\ref{fig:gantt}. The development process was organized into major phases, including planning, design, core development, AI integration, and testing, with regular milestones to track progress.
 
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \includegraphics[width=\textwidth]{img/gantt_chart.png}
     \caption{Project Gantt chart showing development phases and milestones}
@@ -164,7 +164,7 @@ The main classes of the application can be categorized into Main Application Cla
 \end{itemize}
 
 \vspace{0.2cm}
-A detailed Class diagram is included in the UML diagram provided in section \ref{sec:uml}.
+A detailed Class diagram is included in the UML diagram provided in section ~\ref{sec:uml}.
 
 \section{Algorithms and Implementations}
 
@@ -189,11 +189,45 @@ The dice recognition system uses a sequence of image processing steps implemente
 
 \subsection{AI Strategy System}
 
-The AI decision-making system, which is responsible for the decision-making process of the AI, is implemented across multiple manager classes. The game strategy, where the managers will choose the optimal next move for the AI, is done with the following methods:
+The AI decision-making system, which is responsible for determining the optimal moves for the AI, is implemented across multiple manager classes. The strategy is designed to consider the current game state and make intelligent decisions based on the game variant. Below are the key methods used by the AI to guide its decisions:
+    
 \begin{itemize}
-   \item  \textit{`shouldAIBank()`} decides when to bank points for the AI, by calculating the odds of loosing points, versus obtaining more points.
-    \item \textit{`chooseAICategory()`} selects optimal scoring categories for the Balut AI, based on the dice that are currently being held.
+\item  \textit{`shouldAIBank()`} is responsible for determining when the AI should bank points based on the current turn’s score, its total score, and the player's total score. The decision is dependent on the game variant being played, such as the "Greed" or "Pig" game mode. If the AI is playing a "Greed" or "Pig" game, it assesses whether continuing to roll is risky based on the points accumulated so far. If the risk outweighs the potential gain, the AI decides to bank.
+       
+\begin{lstlisting}[language=Kotlin,caption={Should AI Bank Function.}, label={lst:shouldAIBank}]
+    fun shouldAIBank(currentTurnScore: Int, aiTotalScore: Int, playerTotalScore: Int): Boolean =
+        when (_selectedBoard.value) {
+            GameBoard.PIG.modeName -> pigGameManager.shouldAIBank(
+                currentTurnScore = currentTurnScore,
+                aiTotalScore = aiTotalScore,
+                playerTotalScore = playerTotalScore
+            )
+            GameBoard.GREED.modeName -> greedGameManager.shouldAIBank(
+                currentTurnScore = currentTurnScore,
+                aiTotalScore = aiTotalScore
+            )
+            else -> false
+        }
+\end{lstlisting}
+    
+\item \textit{`chooseAICategory()`} is used to select the optimal scoring categories for the Balut AI based on the dice rolled. The AI evaluates the current dice and determines which scoring category will maximize its chances of winning, such as the best combination of dice values for the current state of the game. If the game state is invalid or not initialized, it will first initialize the Balut game before making a decision.
+       
+\begin{lstlisting}[language=Kotlin,caption={Choose AI Category Function.}, label={lst:chooseAICategory}]
+    fun chooseAICategory(diceResults: List<Int>): String {
+        val currentState = (_gameState.value as? GameScoreState.BalutScoreState) ?: run {
+            Timber.e("Invalid game state for AI category selection")
+            return balutGameManager.initializeGame().let {
+                balutGameManager.chooseAICategory(diceResults, it)
+            }
+        }
+        return balutGameManager.chooseAICategory(diceResults, currentState)
+    }
+    \end{lstlisting}
+    
 \end{itemize}
+    
+These methods ensure that the AI can make well-informed decisions based on its current state and the game rules, allowing for a challenging and adaptive opponent in each game variant.
+    
 
 \subsection{Statistics System}
 The statistics tracking system, which is used for analyzing and processing user data, is centralized in `StatisticsManager`:
@@ -227,47 +261,46 @@ This application uses several design patterns to enhance code organization and m
 \section{UML Diagrams}
 \label{sec:uml}
 
-This section presents the UML diagrams that illustrate the architecture and dynamic interactions within the application.
+This section presents the UML diagrams that illustrates the architecture and dynamic interactions within the application.
 
-\subsection{Class Diagram}
-The class diagram provides a detailed view of the static structure of the application, illustrating the key classes, their attributes, methods, and interconnections. It serves as a blueprint for understanding how the application components are organized and how they interact with one another.
+\subsection{Class Diagram}  
+The class diagram (Figure~\ref{fig:class_diagram}) provides a visual representation of the static structure of the application, outlining the main classes, their attributes, methods, and how they interact with one another. Key elements shown in this diagram include game states, player analysis, performance metrics, and detection-related classes that capture the core logic and data flow within the app. For instance, the \texttt{GameState} class tracks the game's progress, while the \texttt{DiceDetectionResult} class manages dice recognition results.
 
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \includesvg[width=1.0\textwidth]{uml/render/class_diagram.svg}
-    \caption{Class Diagram of the Application}
+    \caption{Class Diagram of the Application, showing key classes and their relationships.}
     \label{fig:class_diagram}
 \end{figure}
-\vspace{-0.5cm}
 
-\subsection{Models Diagram}
-The models diagram provides a representation of the data structure of the application, illustrating the relationship between the different data models, and the different attributes associated with each one.
+\subsection{Models Diagram}  
+Figure~\ref{fig:models_diagram} presents the models diagram, which illustrates the data structure of the application. It shows the relationships between various data models, such as \texttt{GameState}, \texttt{GameStatistics}, and \texttt{Detection}. This diagram helps to understand how data is stored and manipulated across different components of the application. For example, the \texttt{Detection} class stores information about recognized objects in the dice, while the \texttt{GameStatistics} class tracks overall game data.
 
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \includesvg[width=1.0\textwidth]{uml/render/models_diagram.svg}
-    \caption{Models Diagram of the Application}
+    \caption{Models Diagram of the Application, showing the relationships between data models.}
     \label{fig:models_diagram}
 \end{figure}
-\vspace{-0.5cm}
 
-\subsection{Structure Diagram}
+\subsection{Structure Diagram}  
+The structure diagram (Figure~\ref{fig:package_structure}) outlines the modular organization of the application's packages, highlighting their dependencies and logical groupings. This diagram provides an overview of the application architecture, which is split into layers like the data layer, UI layer, and utility classes. For example, the \texttt{data} package encompasses models, managers, and repositories, while the \texttt{ui} package contains screens, components, and view models. This diagram helps to visualize the overall design and dependencies between different components of the app.
 
-The structure diagram gives a high-level representation of the application's package organization, highlighting its modular design and the relationships between various components. This diagram helps in understanding the logical grouping and dependencies within the system.
 \begin{figure}[ht!]
     \centering
     \includesvg[width=1.0\textwidth]{uml/render/package_structure.svg}
-    \caption{Package Structure of the Application}
+    \caption{Package Structure of the Application, showing the organization of components and their dependencies.}
     \label{fig:package_structure}
 \end{figure}
 
+
 \section{Sequence Diagrams}
 
-Sequence diagrams are used to illustrate the dynamic interactions between various components and objects within the game. They provide a clear visualization of the message flow and the sequence of operations in key scenarios. In this section, we present sequence diagrams that depict the game flow, virtual mode flow, and analysis flow within the application.
+Sequence diagrams are used to show the dynamic interactions between various components and objects within the game. They provide a clear visualization of the message flow and the sequence of operations in key scenarios. In this section, we present sequence diagrams that depict the game flow, virtual mode flow, and analysis flow within the application.
 
 \subsection{Game Flow Sequence}
 
-The game flow sequence illustrates how different components interact during a typical game session. Figure \ref{fig:game_flow} shows the process starting from the player initiating a game to the end of the game.
+The game flow sequence shows how different components interact during a typical game session. Figure ~\ref{fig:game_flow} shows the process starting from the player initiating a game to the end of the game.
 
 \begin{figure}[ht!]
     \centering
@@ -280,7 +313,7 @@ The game flow sequence illustrates how different components interact during a ty
 
 \subsection{Virtual Mode Sequence}
 
-The virtual mode sequence, depicted in Figure \ref{fig:virtual_mode_flow}, demonstrates how the application manages the image capture and dice detection within the virtual mode.
+The virtual mode sequence, shown in Figure ~\ref{fig:virtual_mode_flow}, demonstrates how the application manages the image capture and dice detection within the virtual mode.
 
 \begin{figure}[ht!]
     \centering
@@ -293,7 +326,7 @@ The virtual mode sequence, depicted in Figure \ref{fig:virtual_mode_flow}, demon
 
 \subsection{Analytics Flow Sequence}
 
-The analytics flow, shown in Figure \ref{fig:analysis_flow}, illustrates the steps involved in retrieving and displaying user statistics and analytics.
+The analytics flow, shown in Figure ~\ref{fig:analysis_flow}, illustrates the steps involved in retrieving and displaying user statistics and analytics.
 
 \begin{figure}[ht!]
     \centering
