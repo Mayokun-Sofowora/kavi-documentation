@@ -14,7 +14,7 @@ The project's architecture follows the modern Model-View-ViewModel (MVVM) patter
     \label{fig:mvvm_explanation}
 \end{figure}
 
-As shown in Figure ~\ref{fig:mvvm_explanation}, the application is structured into several layers:
+As shown in Figure ~\ref{fig:mvvm_explanation}, the application is structured into several layers \cite{bib:mvvm}:
 
 \begin{itemize}
     \item \textbf{Application Layer}: Contains the main application logic and navigation.
@@ -309,7 +309,7 @@ The game flow sequence shows how different components interact during a typical 
     \label{fig:game_flow}
 \end{figure}
 
-% The process begins when the player initiates the game through the `GameScreen`. The `GameScreen` then initiates the `GameViewModel`, which starts the game through the `GameManager`, and begins a timer using the `StatisticsManager`, while also setting up a shake detection manager with the `ShakeDetectionManager`. During gameplay, the player will interact with the `GameScreen` to either roll the dice using a shake or a manual roll, toggle the held dice, or bank their score. These user actions are propagated to the `GameViewModel`, which manipulates the different managers accordingly. At the end of the game the results are shown to the player and the statistics are updated through the `StatisticsManager`. The game flow will end if the player exits the game, or if they win.
+The process begins when the player initiates the game through the `GameScreen`. The `GameScreen` then initiates the `GameViewModel`, which starts the game through the `GameManager`, and begins a timer using the `StatisticsManager`, while also setting up a shake detection manager with the `ShakeDetectionManager`. During gameplay, the player will interact with the `GameScreen` to either roll the dice using a shake or a manual roll, toggle the held dice, or bank their score. These user actions are propagated to the `GameViewModel`, which manipulates the different managers accordingly. At the end of the game the results are shown to the player and the statistics are updated through the `StatisticsManager`. The game flow will end if the player exits the game, or if they win.
 
 \subsection{Virtual Mode Sequence}
 
@@ -322,7 +322,7 @@ The virtual mode sequence, shown in Figure ~\ref{fig:virtual_mode_flow}, demonst
     \label{fig:virtual_mode_flow}
 \end{figure}
 
-% In the virtual mode, the `VirtualModeScreen` initializes a camera preview using a `CameraPreview` class. The player then taps the capture button, which initiates the image capture process. The captured image is passed to the `DetectionViewModel`, which sets its internal state to processing. The `DetectionViewModel` then calls the `RoboflowRepository` which handles all the detection requests, by preprocessing the images, calling the `RoboflowService`, and mapping the result to the `DetectionViewModel`. The `DetectionViewModel` sets its internal state based on the received information, and updates the `VirtualModeScreen` to draw bounding boxes on the screen. The process is repeated if the player retakes the image.
+In the virtual mode, the `VirtualModeScreen` initializes a camera preview using a `CameraPreview` class. The player then taps the capture button, which initiates the image capture process. The captured image is passed to the `DetectionViewModel`, which sets its internal state to processing. The `DetectionViewModel` then calls the `RoboflowRepository` which handles all the detection requests, by preprocessing the images, calling the `RoboflowService`, and mapping the result to the `DetectionViewModel`. The `DetectionViewModel` sets its internal state based on the received information, and updates the `VirtualModeScreen` to draw bounding boxes on the screen. The process is repeated if the player retakes the image.
 
 \subsection{Analytics Flow Sequence}
 
@@ -335,5 +335,5 @@ The analytics flow, shown in Figure ~\ref{fig:analysis_flow}, illustrates the st
     \label{fig:analysis_flow}
 \end{figure}
 
-% When the player opens the `StatisticsScreen`, the `AnalyticsDashboard` is initialized. The `AnalyticsDashboard` then collects the `gameStatistics` from the `StatisticsManager`, which uses the `DataStore` to load the stored statistics. The `StatisticsManager` then calculates various metrics, and updates the `AnalyticsDashboard` with the latest information. The player can also view detailed metrics on the `AnalyticsDashboard`. If the player chooses to clear the statistics, then the `StatisticsManager` will use the `DataStore` and the `StatisticsRepository` to reset the stored data.
+When the player opens the `StatisticsScreen`, the `AnalyticsDashboard` is initialized. The `AnalyticsDashboard` then collects the `gameStatistics` from the `StatisticsManager`, which uses the `DataStore` to load the stored statistics. The `StatisticsManager` then calculates various metrics, and updates the `AnalyticsDashboard` with the latest information. The player can also view detailed metrics on the `AnalyticsDashboard`. If the player chooses to clear the statistics, then the `StatisticsManager` will use the `DataStore` and the `StatisticsRepository` to reset the stored data.
 

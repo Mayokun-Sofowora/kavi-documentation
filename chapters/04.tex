@@ -35,16 +35,32 @@ This section details the necessary steps for installing and running the applicat
 \end{enumerate}
 
 \subsection{Building with Android Studio}
-To install the application for debugging purposes, these procedures should be followed:
+To install the application for debugging purposes, follow these steps:
+
 \begin{enumerate}
     \item \textbf{Clone the Repository}: Start by cloning the project repository from GitHub.
     \begin{verbatim}
-    git clone https://github.com/Mayokun-Sofowora/kavi.git
+git clone https://github.com/Mayokun-Sofowora/kavi.git
     \end{verbatim}
+
     \item \textbf{Open in Android Studio}: Launch Android Studio and open the cloned project.
+
+    \item  \textbf{API setup}: To use the dice recognition feature, the Roboflow API key must be configured. This section provides the necessary steps to obtain and configure the API key.
+    \begin{itemize}
+        \item Sign in to \href{https://roboflow.com/}{Roboflow}.
+        \item Navigate to your Project Dashboard.
+        \item Locate the API Key under the "Settings" or "Security" section.
+        \item Add the api key to the \texttt{local.properties} file:
+        \begin{verbatim}
+    ROBOFLOW_API_KEY=api_key
+        \end{verbatim}
+    \end{itemize}
+
     \item \textbf{Sync Gradle Dependencies}: Allow Android Studio to sync the Gradle dependencies automatically.
-    \item \textbf{Run on Device/Emulator}: Connect an Android device or start an emulator with a minimum SDK of 30, then run the application.
+
+    \item \textbf{Run on a Device or Emulator}: Connect an Android device or start an emulator with a minimum SDK version of 30, then run the application.
 \end{enumerate}
+
 
 In addition to the instructions provided, be sure that:
 \begin{itemize}
@@ -139,6 +155,7 @@ The application offers a diverse set of game boards, each designed for a distinc
         \caption{Pig Game Board}
     \end{subfigure}
     \caption{Game Boards in the Application}
+    \label{fig:game_boards}
 \end{figure}
 
 \subsection{Game Objectives}
@@ -153,7 +170,7 @@ Greed is a more complex game that rewards strategic decision-making and risk-tak
 
 \subsubsection{Balut: Strategic Category Management}
 
-Balut is a game of strategy, similar to Yahtzee. Players have up to three rolls per turn using five dice. The core of Balut is strategically filling the scoring categories, such as sets, straights, full houses, and more. Each category can be used only once, so planning and smart selection of which dice to hold is critical. After all categories are filled, the player with the highest total score wins.
+Balut is a game of strategy, similar to Yahtzee. Players have up to three rolls per turn using five dice. The core of Balut is strategically filling the scoring categories, such as sets, straights, full houses, and more. Each category can be used only once, so planning and smart selection of which dice to hold is critical. After all categories are filled, the player with the highest total score wins. The game boards are shown in Figure ~\ref{fig:balut_boards}.
 
 \subsection{Game Controls: Interacting with the Game}
 
@@ -355,7 +372,7 @@ The following security enhancements are considered for future development:
 
 \section{Working scenarios}
 
-In addition to the scenarios described in the user manual ~\ref{sec:user_manual}, this section provides a few practical examples of application usage.
+In addition to the scenarios described in the user manual ~\ref{sec:user_manual}, this section provides a few practical examples of application usage. Figure ~\ref{fig:image_recognition} shows the application’s ability to recognize dice in the environment, along with the corresponding labels indicating the recognized dice classes. Figure ~\ref{fig:custom_game_board} shows the custom game board, where the user can personalize the game settings. Figure ~\ref{fig:game_boards} shows the game boards for the different games. Figure ~\ref{fig:additional_features} shows a few additional features of the application, such as the win, loose and exit game dialogues.
 
 \begin{figure}[ht!]
     \centering
@@ -370,7 +387,8 @@ In addition to the scenarios described in the user manual ~\ref{sec:user_manual}
     \begin{subfigure}[b]{0.27\textwidth}
         \includegraphics[width=\textwidth]{img/virtual screen3.jpg}
     \end{subfigure}   
-    \caption{Image Recognition of Dice. The images show the application’s ability to recognize dice in the environment, along with the corresponding labels indicating the recognized dice classes.}
+    \caption{Image Recognition of Dice.}
+    \label{fig:image_recognition}
 \end{figure}
 
 
@@ -384,6 +402,7 @@ In addition to the scenarios described in the user manual ~\ref{sec:user_manual}
         \includegraphics[width=\textwidth]{img/custom game.jpg}
     \end{subfigure}
     \caption{Custom Game Board allowing users to personalize their game settings}
+    \label{fig:custom_game_board}
 \end{figure}
 
 \begin{figure}[ht!]
@@ -403,4 +422,5 @@ In addition to the scenarios described in the user manual ~\ref{sec:user_manual}
         \caption{Exiting a game of Greed after finalizing the score}
     \end{subfigure}
     \caption{Board Features and Game Scenarios}
+    \label{fig:additional_features}
 \end{figure}

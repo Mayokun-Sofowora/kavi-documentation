@@ -51,6 +51,8 @@ Users can start a new game by selecting either the classic or custom game mode, 
 
 \begin{table}[ht!]
     \centering
+    \caption{Main Menu Use Case Interactions}
+    \label{tab:main_menu_usecase}
     \begin{tabular}{|l|p{12cm}|}
         \hline
         \textbf{Actor} & \textbf{Description} \\
@@ -62,8 +64,6 @@ Users can start a new game by selecting either the classic or custom game mode, 
                & \textbf{View Player Analysis}: Provides in-depth statistics on past games, allowing players to analyze trends and optimize strategies. \\
         \hline
     \end{tabular}    
-    \caption{Main Menu Use Case Interactions}
-    \label{tab:main_menu_usecase}
 \end{table}
 
 \subsubsection{Game Use Case}
@@ -78,6 +78,8 @@ The game system encapsulates core gameplay mechanics, allowing players to engage
 
 \begin{table}[ht!]
     \centering
+    \caption{Game Use Case Interactions}
+    \label{tab:game_usecase}
     \begin{tabular}{|l|p{12cm}|}
         \hline
         \textbf{Actor} & \textbf{Description} \\
@@ -94,8 +96,6 @@ The game system encapsulates core gameplay mechanics, allowing players to engage
         AI & \textbf{Make Strategic Decisions}: Use heuristic probability to evaluate the game state and optimize moves. \\
         \hline
     \end{tabular}    
-    \caption{Game Use Case Interactions}
-    \label{tab:game_usecase}
 \end{table}
 
 Players can roll dice using the virtual interface or capture real dice rolls via image recognition, enabling seamless integration between physical and digital gameplay. During a turn, players can choose to hold specific dice to refine their strategy or bank points to secure their score. AI opponents analyze game conditions using heuristic probability to make strategic decisions, adding challenge and unpredictability to the gameplay. Table~\ref{tab:game_usecase} outlines the primary interactions within the game system.

@@ -6,10 +6,12 @@ Ensuring the reliability, functionality, and usability of software applications 
 This chapter provides an overview of our quality assurance methods during application development. Specifically, it outlines the testing paradigm, test case designs, testing scope, detected and resolved bugs, and experimental results.
 
 \section{Testing}
-The table below summarizes the different testing types, their purposes, and scopes for this application.
+The Table ~\ref{tab:testing_summary} summarizes the different testing types, their purposes, and scopes for this application.
 
 \begin{table}[ht!]
     \centering
+    \caption{Summary of Testing Types and Scope}
+    \label{tab:testing_summary}
     \begin{tabular}{|p{4cm}|p{4cm}|p{4cm}|}
     \hline
     \textbf{Test Type} & \textbf{Purpose} & \textbf{Scope} \\ \hline
@@ -20,8 +22,6 @@ The table below summarizes the different testing types, their purposes, and scop
     Regression Testing & Identify defects after changes to the codebase. & Post-fix validation of all modules. \\ \hline
     Performance Testing & Measure responsiveness and stability under load. & Frame rate, AI performance with multiple players. \\ \hline
     \end{tabular}
-    \caption{Summary of Testing Types and Scope}
-    \label{tab:testing_summary}
 \end{table}
 
 The V-Model testing paradigm guided the verification and validation of this application. A structured approach, particularly suitable where high-quality assurance is critical ~\cite{bib:vmodel}, the V-Model expands on the traditional Waterfall Model by emphasizing a parallel relationship between development and testing phases (Figure ~\ref{fig:vmodel_diagram}). 
