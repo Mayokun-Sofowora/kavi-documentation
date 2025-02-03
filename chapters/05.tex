@@ -14,7 +14,7 @@ The project's architecture follows the modern Model-View-ViewModel (MVVM) patter
     \label{fig:mvvm_explanation}
 \end{figure}
 
-As shown in Figure ~\ref{fig:mvvm_explanation}, the application is structured into several layers \cite{bib:mvvm}:
+As shown in Figure~\ref{fig:mvvm_explanation}, the application is structured into several layers~\cite{bib:mvvm}:
 
 \begin{itemize}
     \item \textbf{Application Layer}: Contains the main application logic and navigation.
@@ -59,7 +59,7 @@ The design and implementation of the dice game application follow an iterative a
 \subsection{Design Process}
 The application's design process began with creating detailed wireframes and prototypes in Figma. The designs underwent several iterations based on user feedback and technical constraints, evolving into the final implementation. Figure~\ref{fig:figma_designs} shows some of the initial design concepts and their evolution~\cite{bib:kavifigma}.
 
-Various existing solutions and design tools inspired the design of the application, one of which stood out was the board screen design was inspired by a dice application project by binaryshrey~\cite{bib:binaryshrey}. This repository provided a minimalistic and intuitive approach to dice roll applications, which influenced the layout and functionality of the board screen in this project.
+Various existing solutions and design tools inspired the design of the application, one of which stood out was the board screen design was inspired by a dice application project by Shreyansh Saurabh~\cite{bib:binaryshrey}. This repository provided a minimalistic and intuitive approach to dice roll applications, which influenced the layout and functionality of the board screen in this project.
 
 \subsection{Model Training}
 
@@ -76,7 +76,7 @@ Roboflow facilitated data augmentation and preprocessing, which enhanced the dat
 
 \subsection{Project Timeline}
 
-The project was implemented following a structured timeline as shown in Figure ~\ref{fig:gantt}. The development process was organized into major phases, including planning, design, core development, AI integration, and testing, with regular milestones to track progress.
+The project was implemented following a structured timeline as shown in Figure~\ref{fig:gantt}. The development process was organized into major phases, including planning, design, core development, AI integration, and testing, with regular milestones to track progress.
 
 \begin{figure}[ht!]
     \centering
@@ -145,26 +145,26 @@ The main classes of the application can be categorized into Main Application Cla
 
 \subsubsection{ViewModels}
 \begin{itemize}
-  \item \textbf{AppViewModel}: Manages application-wide data and state, coordinating between different parts of the application.
+    \item \textbf{AppViewModel}: Manages application-wide data and state, coordinating between different parts of the application.
     \item \textbf{GameViewModel}: Manages data and logic specific to each game, providing a bridge between the view and the data and state.
-      \item \textbf{DetectionViewModel}: Manages the state and logic of the image detection process, and exposes this data to the UI layer.
+    \item \textbf{DetectionViewModel}: Manages the state and logic of the image detection process, and exposes this data to the UI layer.
 \end{itemize}
 
 \subsubsection{Managers}
 \begin{itemize}
     \item \textbf{MyGameManager}: Handles the state management and the logic of the custom game board.
     \item \textbf{PigGameManager}: Manages the game state, rules, and scoring for the Pig game.
-     \item \textbf{GreedGameManager}: Manages the game state, rules, and scoring for the Greed game.
+    \item \textbf{GreedGameManager}: Manages the game state, rules, and scoring for the Greed game.
     \item \textbf{BalutGameManager}: Manages the game state, rules, and scoring for the Balut game.
-     \item \textbf{DiceManager}: Manages the various aspects of rolling the dice, and its state.
+    \item \textbf{DiceManager}: Manages the various aspects of rolling the dice, and its state.
     \item \textbf{DataStoreManager}: Manages the saving and retrieval of data from the DataStore.
-     \item \textbf{StatisticsManager}: Manages the collection and processing of game statistics.
+    \item \textbf{StatisticsManager}: Manages the collection and processing of game statistics.
     \item \textbf{SettingsManager}: Manages the saving and loading of the application's settings.
-     \item \textbf{ShakeDetectorManager}: Manages the logic of the shake gesture.
+    \item \textbf{ShakeDetectorManager}: Manages the logic of the shake gesture.
 \end{itemize}
 
 \vspace{0.2cm}
-A detailed Class diagram is included in the UML diagram provided in section ~\ref{sec:uml}.
+A detailed Class diagram is included in the UML diagram provided in Section~\ref{sec:uml}.
 
 \section{Algorithms and Implementations}
 
@@ -300,7 +300,7 @@ Sequence diagrams are used to show the dynamic interactions between various comp
 
 \subsection{Game Flow Sequence}
 
-The game flow sequence shows how different components interact during a typical game session. Figure ~\ref{fig:game_flow} shows the process starting from the player initiating a game to the end of the game.
+The game flow sequence shows how different components interact during a typical game session. Figure~\ref{fig:game_flow} shows the process starting from the player initiating a game to the end of the game.
 
 \begin{figure}[ht!]
     \centering
@@ -309,11 +309,11 @@ The game flow sequence shows how different components interact during a typical 
     \label{fig:game_flow}
 \end{figure}
 
-The process begins when the player initiates the game through the `GameScreen`. The `GameScreen` then initiates the `GameViewModel`, which starts the game through the `GameManager`, and begins a timer using the `StatisticsManager`, while also setting up a shake detection manager with the `ShakeDetectionManager`. During gameplay, the player will interact with the `GameScreen` to either roll the dice using a shake or a manual roll, toggle the held dice, or bank their score. These user actions are propagated to the `GameViewModel`, which manipulates the different managers accordingly. At the end of the game the results are shown to the player and the statistics are updated through the `StatisticsManager`. The game flow will end if the player exits the game, or if they win.
+The game starts when the player initiates it through the `GameScreen`. The `GameScreen` initializes the `GameViewModel`, which starts the game by calling the `GameManager` to set up the initial game state. Simultaneously, the `StatisticsManager` starts tracking game time, and the `ShakeDetectionManager` is activated to detect shake gestures for rolling dice. During gameplay, the player can roll the dice either by shaking the device or manually tapping the roll button. These actions are handled by the `GameViewModel`, which instructs the `DiceManager` to roll the dice and updates the game state through the `GameManager`. The player can also toggle dice holds or bank their score, triggering updates in the `GameManager` and `StatisticsManager` as needed. The game ends when a win or loose condition is met, prompting the `GameViewModel` to update statistics and display the results to the player. Alternatively, if the player exits before completing the game, progress is saved, and the shake detection is paused.
 
 \subsection{Virtual Mode Sequence}
 
-The virtual mode sequence, shown in Figure ~\ref{fig:virtual_mode_flow}, demonstrates how the application manages the image capture and dice detection within the virtual mode.
+The virtual mode sequence, shown in Figure~\ref{fig:virtual_mode_flow}, demonstrates how the application manages the image capture and dice detection within the virtual mode.
 
 \begin{figure}[ht!]
     \centering
@@ -326,7 +326,7 @@ In the virtual mode, the `VirtualModeScreen` initializes a camera preview using 
 
 \subsection{Analytics Flow Sequence}
 
-The analytics flow, shown in Figure ~\ref{fig:analysis_flow}, illustrates the steps involved in retrieving and displaying user statistics and analytics.
+The analytics flow, shown in Figure~\ref{fig:analysis_flow}, illustrates the steps involved in retrieving and displaying user statistics and analytics.
 
 \begin{figure}[ht!]
     \centering
@@ -335,5 +335,5 @@ The analytics flow, shown in Figure ~\ref{fig:analysis_flow}, illustrates the st
     \label{fig:analysis_flow}
 \end{figure}
 
-When the player opens the `StatisticsScreen`, the `AnalyticsDashboard` is initialized. The `AnalyticsDashboard` then collects the `gameStatistics` from the `StatisticsManager`, which uses the `DataStore` to load the stored statistics. The `StatisticsManager` then calculates various metrics, and updates the `AnalyticsDashboard` with the latest information. The player can also view detailed metrics on the `AnalyticsDashboard`. If the player chooses to clear the statistics, then the `StatisticsManager` will use the `DataStore` and the `StatisticsRepository` to reset the stored data.
+When the player opens the `StatisticsScreen`, the `AnalyticsDashboard` is initialized. The `AnalyticsDashboard` then collects the `gameStatistics` from the `StatisticsManager`, which retrieves the stored statistics from the `DataStore`. The `StatisticsManager` calculates various metrics, such as win rates, play style, performance metrics, achievements, decision patterns, and time metrics. Afterward, it updates the `AnalyticsDashboard` with the latest information. The player can view detailed metrics on the `AnalyticsDashboard`, including risk-taking levels, average rolls per turn, banking thresholds, and achievement progress. If the player chooses to clear the statistics, the `StatisticsManager` will use the `DataStore` to reset the stored data and clear the local state.  
 

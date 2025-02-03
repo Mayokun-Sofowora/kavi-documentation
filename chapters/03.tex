@@ -41,7 +41,7 @@ The implementation of accurate dice recognition presents several technical chall
 
 \subsection{Image Preprocessing}
 
-The system employs a sophisticated preprocessing pipeline that enhances image quality for more accurate recognition, this is illustrated in Listing ~\ref{lst:image_preprocess}:
+The system employs a sophisticated preprocessing pipeline that enhances image quality for more accurate recognition, this is illustrated in Listing~\ref{lst:image_preprocess}:
 \begin{lstlisting}[language=Kotlin, caption={Image Preprocessing Pipeline}, label=lst:image_preprocess]
     private suspend fun preprocessImage(bitmap: Bitmap): Bitmap {
         return withContext(Dispatchers.Default) {
@@ -73,7 +73,7 @@ The system employs a sophisticated preprocessing pipeline that enhances image qu
 
 The dice recognition system leverages a pre-trained object detection model from Roboflow~\cite{bib:kavidataset}. The model processes images at 640x640 resolution and was trained on a custom dataset of 250 images, supporting six distinct classes representing dice faces 1-6. Developed and hosted on Roboflow's platform, it provides efficient object detection capabilities through their API service.
 
-The model is then accessed through Roboflow's Hosted Inference API, with preprocessing handling as shown in Listing ~\ref{lst:image_preprocess}.
+The model is then accessed through Roboflow's Hosted Inference API, with preprocessing handling as shown in Listing~\ref{lst:image_preprocess}.
 
 The preprocessing pipeline starts by converting the image to RGB format to standardize color space, then contrasts enhancement and lighting normalization to improve visibility, particularly under varying conditions. The image is then resized while preserving its aspect ratio to maintain recognition accuracy, then noise reduction removes unwanted artifacts that could interfere with recognition, especially in suboptimal conditions. If preprocessing fails, the system defaults to basic scaling to ensure usability.
 
@@ -91,21 +91,21 @@ The detection pipeline evolved throughout development, starting with a basic imp
 
 The initial detection process followed a straightforward approach:
 \begin{lstlisting}[language=Kotlin, caption={Initial Dice Detection Pipeline}, label=lst:initial_dice_detection]
-suspend fun detectDice(bitmap: Bitmap): List<Detection> {
-    return withContext(Dispatchers.Default) {
-        try {
-            // Preprocess the image
-            val processed = preprocessImage(bitmap)
-            // Run inference
-            val detections = roboflowRepository.detectDice(processed)
-            // Post-process results
-            filterAndValidateDetections(detections)
-        } catch (e: Exception) {
-            Timber.e(e, "Error detecting dice")
-            emptyList()
+    suspend fun detectDice(bitmap: Bitmap): List<Detection> {
+        return withContext(Dispatchers.Default) {
+            try {
+                // Preprocess the image
+                val processed = preprocessImage(bitmap)
+                // Run inference
+                val detections = roboflowRepository.detectDice(processed)
+                // Post-process results
+                filterAndValidateDetections(detections)
+            } catch (e: Exception) {
+                Timber.e(e, "Error detecting dice")
+                emptyList()
+            }
         }
     }
-}
 \end{lstlisting}
 
 The pipeline was later enhanced to improve detection reliability through:
@@ -143,33 +143,33 @@ The \texttt{viewModelScope} is tied to the lifecycle of the ViewModel. This ensu
 
 The \texttt{launch} function starts a new coroutine, allowing non-blocking execution. This is crucial for processing tasks like dice value detection or data loading, which can be time-consuming.
 \begin{lstlisting}[language=Kotlin, caption={Launching a Coroutine}, label=lst:launch_coroutine]
-viewModelScope.launch {
-    // Load vibration setting
-    dataStoreManager.getVibrationEnabled()
-        .collect { enabled -> _vibrationEnabled.value = enabled }
-}
+    viewModelScope.launch {
+        // Load vibration setting
+        dataStoreManager.getVibrationEnabled()
+            .collect { enabled -> _vibrationEnabled.value = enabled }
+    }
 \end{lstlisting}
 
 \subsection{Suspend Functions}
 
 Suspend functions are a key feature of Kotlin's coroutine system, marking functions that can be paused and resumed. These functions can only be called from within a coroutine or another suspend function, ensuring proper asynchronous execution.
 \begin{lstlisting}[language=Kotlin, caption={Suspend Function Example}, label=lst:suspend_function]
-fun rollDice() {
-    if (isRolling.value || !isRollAllowed.value) return
-    viewModelScope.launch {
-        trackDecision()
-        trackRoll()
-        _isLoading.value = true
-        val results = diceManager.rollDiceForBoard(_selectedBoard.value)
-        if (_vibrationEnabled.value) provideHapticFeedback()
-        // Process game state after rolling
-        val newState = processGameState(results)
-        _gameState.value = newState
+    fun rollDice() {
+        if (isRolling.value || !isRollAllowed.value) return
+        viewModelScope.launch {
+            trackDecision()
+            trackRoll()
+            _isLoading.value = true
+            val results = diceManager.rollDiceForBoard(_selectedBoard.value)
+            if (_vibrationEnabled.value) provideHapticFeedback()
+            // Process game state after rolling
+            val newState = processGameState(results)
+            _gameState.value = newState
+        }
     }
-}
 \end{lstlisting}
 
-In Listing ~\ref{lst:suspend_function}, the \texttt{rollDice} function is designed to manage the dice-rolling process within the game. It is executed within a coroutine scope using \texttt{viewModelScope.launch}, which allows it to perform asynchronous operations without blocking the main thread. This ensures that the UI remains responsive while the dice are being rolled.
+In Listing~\ref{lst:suspend_function}, the \texttt{rollDice} function is designed to manage the dice-rolling process within the game. It is executed within a coroutine scope using \texttt{viewModelScope.launch}, which allows it to perform asynchronous operations without blocking the main thread. This ensures that the UI remains responsive while the dice are being rolled.
 
 The function begins by checking if a roll is already in progress or if rolling is not allowed, returning early if either condition is true. This prevents unnecessary operations and ensures that the game logic is executed only when appropriate.
 
@@ -183,22 +183,22 @@ The use of coroutines in this function allows for efficient management of asynch
 
 The \texttt{try-catch} block within the coroutine handles exceptions, ensuring errors are logged and managed gracefully. This prevents crashes and maintains application stability.
 \begin{lstlisting}[language=Kotlin, caption={Error Handling in Coroutines}, label=lst:error_handling_coroutine]
-viewModelScope.launch {
-    try {
-        val detections = roboflowRepository.detectDice(bitmap)
-        _detectionState.value = if (detections.isNotEmpty()) {
-            DetectionState.Success(detections)
-        } else {
-            DetectionState.NoDetections
+    viewModelScope.launch {
+        try {
+            val detections = roboflowRepository.detectDice(bitmap)
+            _detectionState.value = if (detections.isNotEmpty()) {
+                DetectionState.Success(detections)
+            } else {
+                DetectionState.NoDetections
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error detecting dice")
+            _detectionState.value = DetectionState.Error(e.message ?: "Unknown error")
         }
-    } catch (e: Exception) {
-        Timber.e(e, "Error detecting dice")
-        _detectionState.value = DetectionState.Error(e.message ?: "Unknown error")
     }
-}
 \end{lstlisting}
 
-The coroutine runs in the background, ensuring the main thread remains responsive to user interactions. Listing ~\ref{lst:error_handling_coroutine} illustrates the implementation of error handling within a coroutine. It processes collected data to update a LiveData property, enabling the UI to dynamically reflect any changes.
+The coroutine runs in the background, ensuring the main thread remains responsive to user interactions. Listing~\ref{lst:error_handling_coroutine} illustrates the implementation of error handling within a coroutine. It processes collected data to update a LiveData property, enabling the UI to dynamically reflect any changes.
 
 \subsection{Interface Responsiveness}
 
@@ -229,7 +229,7 @@ In the game of \emph{Balut}, when it is the AI's turn, it must decide whether to
 
 \subsubsection{The \texttt{handleAITurn} Function}
 
-The \texttt{handleAITurn} function in the game of \emph{Balut} guides the AI's actions during its turn. It considers factors such as the number of rolls remaining, the values of the dice, and the potential scores of different categories. Depending on the game state, the AI either selects a category to score (when no rolls are left) or decides which dice to hold for the next roll. The Listing ~\ref{lst:ai_turn_function}  illustrates the function:
+The \texttt{handleAITurn} function in the game of \emph{Balut} guides the AI's actions during its turn. It considers factors such as the number of rolls remaining, the values of the dice, and the potential scores of different categories. Depending on the game state, the AI either selects a category to score (when no rolls are left) or decides which dice to hold for the next roll. The Listing~\ref{lst:ai_turn_function}  illustrates the function:
 
 \begin{lstlisting}[language=Kotlin, caption={handleAITurn Function}, label=lst:ai_turn_function]
     private fun handleAITurn(
@@ -256,7 +256,7 @@ The \texttt{handleAITurn} function in the game of \emph{Balut} guides the AI's a
 
 \subsubsection{The \texttt{shouldAIBank} Function}
 
-In the game of \emph{Pig}, the AI's decision to bank its current turn score is partly influenced by the observed play style of the human player. By analyzing the player's tendencies, the AI adjusts its probability to bank, either taking more risks or playing it safe. The Listing ~\ref{lst:player_style_adjustment} shows how the AI adjusts its banking strategy based on the player's style:
+In the game of \emph{Pig}, the AI's decision to bank its current turn score is partly influenced by the observed play style of the human player. By analyzing the player's tendencies, the AI adjusts its probability to bank, either taking more risks or playing it safe. The Listing~\ref{lst:player_style_adjustment} shows how the AI adjusts its banking strategy based on the player's style:
 
 \begin{lstlisting}[language=Kotlin, caption={Player Style Adjustment}, label=lst:player_style_adjustment]
     val playerAnalysis = statisticsManager.playerAnalysis.value
@@ -276,7 +276,7 @@ The system first retrieves the player's analysis from the statistics manager, de
 \subsection{Game Mechanics}
 
 The game mechanics are crucial for delivering an engaging and intuitive gameplay experience. They are designed to ensure clear rules and interactions for both players and the AI, enabling a seamless game flow.
-An important component of the implementation is the \texttt{handleTurn} method, as shown in Listing \ref{lst:handleTurn}. This method differentiates between player and AI turns and manages key actions such as dice holding and roll counting. Its modular design supports clear separation of player and AI logic into distinct methods, reducing complexity and improving maintainability. This structure makes it easy to add new game modes or modify the AI behavior without disrupting existing functionality.
+An important component of the implementation is the \texttt{handleTurn} method, as shown in Listing~\ref{lst:handleTurn}. This method differentiates between player and AI turns and manages key actions such as dice holding and roll counting. Its modular design supports clear separation of player and AI logic into distinct methods, reducing complexity and improving maintainability. This structure makes it easy to add new game modes or modify the AI behavior without disrupting existing functionality.
 
 \begin{lstlisting}[language=Kotlin, caption={handleTurn Function}, label=lst:handleTurn]
     fun handleTurn(
