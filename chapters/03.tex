@@ -41,7 +41,8 @@ The implementation of accurate dice recognition presents several technical chall
 
 \subsection{Image Preprocessing}
 
-The system employs a sophisticated preprocessing pipeline that enhances image quality for more accurate recognition, this is illustrated in Listing~\ref{lst:image_preprocess}:
+The system employs a sophisticated preprocessing pipeline using Android's built-in Bitmap processing capabilities and the AndroidX Core-KTX library for image manipulation. The preprocessing steps, illustrated in Listing~\ref{lst:image_preprocess}, utilize several key components:
+
 \begin{lstlisting}[language=Kotlin, caption={Image Preprocessing Pipeline}, label=lst:image_preprocess]
     private suspend fun preprocessImage(bitmap: Bitmap): Bitmap {
         return withContext(Dispatchers.Default) {
@@ -68,6 +69,16 @@ The system employs a sophisticated preprocessing pipeline that enhances image qu
         }
     }
 \end{lstlisting}
+\begin{itemize}
+    \item \textbf{RGB Conversion}: Uses Android's ColorSpace API to ensure consistent color representation
+    \item \textbf{Contrast Enhancement}: Implements a histogram equalization algorithm through Android's ColorMatrix
+    \item \textbf{Aspect Ratio Scaling}: Utilizes Android's createScaledBitmap with custom calculations for dimension preservation
+    \item \textbf{Noise Reduction}: Applies a Gaussian blur filter using Android's RenderScript (now deprecated) or equivalent Core-KTX functions
+\end{itemize}
+
+The implementation is shown in Listing~\ref{lst:image_preprocess}, with each step carefully orchestrated to maintain image quality while optimizing for dice detection.
+
+This preprocessing pipeline ensures optimal image quality before the detection phase, which is further detailed in the Model Architecture section.
 
 \section{Model Architecture}
 
@@ -85,29 +96,7 @@ The preprocessing pipeline starts by converting the image to RGB format to stand
 
 For each detected die, the model outputs bounding box coordinates, confidence scores, and class labels, which the application processes to update the game state.
 
-\subsection{Detection Pipeline}
-
 The detection pipeline evolved throughout development, starting with a basic implementation and later expanding to include more sophisticated preprocessing and validation.
-
-The initial detection process followed a straightforward approach:
-\begin{lstlisting}[language=Kotlin, caption={Initial Dice Detection Pipeline}, label=lst:initial_dice_detection]
-    suspend fun detectDice(bitmap: Bitmap): List<Detection> {
-        return withContext(Dispatchers.Default) {
-            try {
-                // Preprocess the image
-                val processed = preprocessImage(bitmap)
-                // Run inference
-                val detections = roboflowRepository.detectDice(processed)
-                // Post-process results
-                filterAndValidateDetections(detections)
-            } catch (e: Exception) {
-                Timber.e(e, "Error detecting dice")
-                emptyList()
-            }
-        }
-    }
-\end{lstlisting}
-
 The pipeline was later enhanced to improve detection reliability through:
 \begin{itemize}
     \item \textbf{Advanced Preprocessing}: Implementation of RGB format conversion, contrast enhancement, and adaptive scaling while maintaining aspect ratios.
@@ -141,7 +130,9 @@ The \texttt{viewModelScope} is tied to the lifecycle of the ViewModel. This ensu
 
 \subsection{Launching Coroutines}
 
-The \texttt{launch} function starts a new coroutine, allowing non-blocking execution. This is crucial for processing tasks like dice value detection or data loading, which can be time-consuming.
+The \texttt{launch} function starts a new coroutine, allowing non-blocking execution. This is crucial for processing tasks like dice value detection or data loading, which can be time-consuming. The \texttt{viewModelScope} is tied to the ViewModel's lifecycle, ensuring that any running coroutines are automatically cancelled when the ViewModel is cleared, preventing memory leaks and unnecessary background work.
+
+
 \begin{lstlisting}[language=Kotlin, caption={Launching a Coroutine}, label=lst:launch_coroutine]
     viewModelScope.launch {
         // Load vibration setting
@@ -212,13 +203,50 @@ Making a game with lively gameplay presents many challenges, particularly when i
 
 \subsection{Scoring Algorithm}
 
-The scoring algorithm calculates scores based on the game's rules and considers various scoring categories and player actions. 
-For example, in a game like Pig, the score for a single turn can be calculated as:
+The scoring system implements different calculations for each game variant:
+
+\subsubsection{Balut Scoring}
+The scoring for the Balut variant is calculated as:
+
 \begin{equation}
-\text{Turn Score} = \sum_{i=1}^{n} x_i
+    S_{category} = w_c \times b_s \times (1 + (r - 1)(1 - l)) \times m_s
 \end{equation}
-where $n$ is the number of dice rolls in the turn, and $x_i$ represents the value of each dice roll.
-The scoring algorithm plays a crucial role in determining the outcome of the game and ensuring fair and consistent scoring across different game variants and player actions.
+
+where $S_{category}$ represents the final score for a category, $w_c$ is the category weight (1.0-2.5), $b_s$ is the base score from dice combination, $r$ is the random factor (0.5-1.5), $l$ is the AI skill level (0-1), and $m_s$ is the multiplier based on game state (0.6-1.2).
+
+\subsubsection{Pig Scoring}
+For the Pig variant, the turn score is calculated as:
+
+\begin{equation}
+    S_{turn} = \begin{cases}
+        \sum_{i=1}^{n} d_i, & \text{if } d_i \neq 1 \text{ for all rolls} \\
+        0, & \text{if any } d_i = 1
+    \end{cases}
+\end{equation}
+
+where $S_{turn}$ represents the score for a turn, $n$ is the number of rolls in the turn, and $d_i$ is the value of the $i$th dice roll.
+
+\subsubsection{Greed Scoring}
+For the Greed variant, the turn score is calculated as:
+
+\begin{equation}
+    S_{greed} = \sum_{i=1}^{k} (v_i \times m_i) + b
+\end{equation}
+
+where $S_{greed}$ represents the final score for a turn, $k$ is the number of scoring combinations, $v_i$ is the value of each scoring combination, $m_i$ is the multiplier for each combination type (e.g., triples, straights), and $b$ is any bonus points for special combinations. The scoring combinations are:
+
+\begin{equation}
+    v_i = \begin{cases}
+        1000, & \text{if triple ones} \\
+        200 \times n, & \text{if triple } n \text{ (where } n > 1\text{)} \\
+        100, & \text{if single one} \\
+        50, & \text{if single five} \\
+        1500, & \text{if straight (1-6)} \\
+        750, & \text{if three pairs} \\
+        0, & \text{otherwise}
+    \end{cases}
+\end{equation}
+
 
 \subsection{Adaptive AI}
 \label{subsec:adaptive_ai}
@@ -254,23 +282,82 @@ The \texttt{handleAITurn} function in the game of \emph{Balut} guides the AI's a
     }
 \end{lstlisting}
 
-\subsubsection{The \texttt{shouldAIBank} Function}
+\subsubsection{The \texttt{shouldAIBank} Function: Adapting to Player Style}
 
-In the game of \emph{Pig}, the AI's decision to bank its current turn score is partly influenced by the observed play style of the human player. By analyzing the player's tendencies, the AI adjusts its probability to bank, either taking more risks or playing it safe. The Listing~\ref{lst:player_style_adjustment} shows how the AI adjusts its banking strategy based on the player's style:
+In various dice games, the AI's decision-making process is influenced by the human player's observed play style. By analyzing the player's tendencies, the AI adjusts its risk-taking behavior accordingly. The implementation varies across different games but follows a common principle: \textbf{aggressive players encourage riskier AI behavior, while cautious players make the AI more conservative}.
+
+\paragraph{Pig: Adjusting Risk in Banking Decisions}  
+In the game of \emph{Pig}, the AI decides whether to bank its current turn score or continue rolling. The AI considers the player's style before making this decision. Listing~\ref{lst:player_style_adjustment} demonstrates this adjustment:
 
 \begin{lstlisting}[language=Kotlin, caption={Player Style Adjustment}, label=lst:player_style_adjustment]
-    val playerAnalysis = statisticsManager.playerAnalysis.value
-    val playerStyle = playerAnalysis?.playStyle ?: PlayStyle.BALANCED
+val playerAnalysis = statisticsManager.playerAnalysis.value
+val playerStyle = playerAnalysis?.playStyle ?: PlayStyle.BALANCED
 
-    // Adjust based on player style
-    val styleAdjustment = when (playerStyle) {
-        PlayStyle.AGGRESSIVE -> -0.1
-        PlayStyle.CAUTIOUS -> 0.1
-        else -> 0.0
-    }
+// Adjust based on player style
+val styleAdjustment = when (playerStyle) {
+    PlayStyle.AGGRESSIVE -> -0.1  // More risk-taking
+    PlayStyle.CAUTIOUS -> 0.1     // More conservative
+    else -> 0.0
+}
 \end{lstlisting}
 
-The system first retrieves the player's analysis from the statistics manager, determining the player's style. If no analysis is available, it defaults to \texttt{BALANCED}. Using a \texttt{when} expression, the code assigns a \texttt{styleAdjustment} value. For \texttt{AGGRESSIVE} players, this results in a negative adjustment, causing the AI to bank less frequently and take greater risks. For \texttt{CAUTIOUS} players, the adjustment is positive, encouraging the AI to secure its points more readily. This approach allows the AI to dynamically adapt its strategy based on the opponent's behavioral tendencies, enhancing both the challenge and adaptability of the gameplay.
+Here, the AI retrieves the player’s style from the statistics manager. An aggressive player causes the AI to reduce its tendency to bank, encouraging riskier rolls, while a cautious player leads the AI to secure points more readily.
+
+\paragraph{Greed: Dynamic Banking Thresholds}  
+In \emph{Greed}, a more complex dice game, the AI incorporates both \textbf{a base banking threshold} and \textbf{situational adjustments}. The function in Listing~\ref{lst:greed_ai_banking} demonstrates how the AI modifies its strategy:
+
+
+\begin{lstlisting}[language=Kotlin, caption={AI Banking Strategy in Greed}, label=lst:greed_ai_banking]
+val baseThreshold = when (playerAnalysis?.playStyle) {
+    PlayStyle.AGGRESSIVE -> 1200  // AI takes greater risks
+    PlayStyle.CAUTIOUS -> 900     // AI banks earlier
+    else -> 1000                  // Default threshold
+}
+
+// Adjust for game state
+val situationalAdjustment = when {
+    aiTotalScore == 0 -> -200  // Willing to risk when no points are banked
+    aiTotalScore >= 8000 -> -300  // More aggressive near victory
+    currentTurnScore >= 2000 -> 500  // Encouraged to bank large scores
+    else -> 0
+}
+
+// Final threshold considers randomness for unpredictability
+val finalThreshold = (baseThreshold + situationalAdjustment).coerceIn(800, 2000)
+\end{lstlisting}
+
+In this case, an aggressive opponent leads the AI to play more recklessly, increasing the threshold before banking. Conversely, a cautious opponent results in a lower threshold, making the AI secure its points earlier.
+
+\paragraph{Balut: Play Style Influences Dice Holding and Category Selection}  
+\emph{Balut} introduces additional layers of decision-making, including \textbf{dice-holding strategies} and \textbf{category selection}. The AI modifies its strategy based on the player’s style:
+
+\textbf{Dice Holding:}  
+\begin{lstlisting}[language=Kotlin, caption={AI Dice Holding in Balut}, label=lst:balut_dice_holding]
+val aiStyle = when (playerAnalysis?.playStyle) {
+    PlayStyle.AGGRESSIVE -> 0.7  // More likely to hold high-value dice
+    PlayStyle.CAUTIOUS -> 0.5    // More selective
+    else -> 0.6
+}
+\end{lstlisting}
+
+Here in Listing~\ref{lst:balut_dice_holding}, an aggressive player makes the AI hold more dice in an attempt to go for high-risk, high-reward combinations.
+
+\textbf{Category Selection:}  
+\begin{lstlisting}[language=Kotlin, caption={AI Category Selection in Balut}, label=lst:balut_category_selection]
+val categoryScores = availableCategories.associateWith { category ->
+    val baseScore = ScoreCalculator.calculateCategoryScore(diceResults, category)
+    val weight = when {
+        category == "Five of a Kind" -> if (baseScore > 0) 2.5 else 0.0
+        category == "Large Straight" -> if (baseScore > 0) 2.2 else 0.0
+        else -> 1.0
+    }
+    weight * (if (playerAnalysis?.playStyle == PlayStyle.AGGRESSIVE) 1.2 else 1.0)
+}
+\end{lstlisting}
+
+Here in Listing~\ref{lst:balut_category_selection}, the AI prioritizes high-value categories when facing an aggressive player, taking bigger risks. Against a cautious player, it leans towards safer choices.
+
+Across \emph{Pig}, \emph{Greed}, and \emph{Balut}, the AI \textbf{adapts dynamically} to the player's style. This adaptability ensures a more engaging and challenging experience, making the AI feel responsive rather than static. Whether banking, holding dice, or selecting categories, the AI's decisions reflect the player's behavior, leading to a more immersive gameplay experience.
 
 
 \subsection{Game Mechanics}
@@ -289,7 +376,7 @@ An important component of the implementation is the \texttt{handleTurn} method, 
 
 During its turn, the AI uses a blend of predefined rules and probabilistic decision-making to evaluate the game state and select the optimal strategy. Meanwhile, the game mechanics prioritize user experience by offering clear visual and interactive cues, ensuring that players can focus on strategy without being hindered by the interface.
 
-In the \texttt{handleTurn} method:
+In the \texttt{handleTurn} method as shown in Listing~\ref{lst:handleTurn}, the method differentiates between player and AI turns and manages key actions such as dice holding and roll counting.
 \begin{itemize}
     \item \textbf{AI Turn Handling:} If the current player's index matches the AI player's identifier, the method delegates the turn to \texttt{handleAITurn}, which implements the AI's decision-making logic. This includes evaluating the game state, deciding which dice to hold, and determining whether to bank a score or re-roll.
     \item \textbf{Player Turn Handling:} If the turn belongs to a human player, the method invokes \texttt{handlePlayerTurn}, which processes the player's actions, such as selecting dice to hold and performing a roll.
@@ -303,7 +390,6 @@ Through these technical and strategic design choices, the project delivers an en
 
 
 \section{Existing Solutions}
-
 This section provides an overview of notable solutions in the domain of dice game applications and image recognition technologies. The analysis focuses on how each solution addresses dice recognition and gaming, while also contextualizing the unique enhancements introduced by this thesis.
 
 \subsection{D3-Deep-Dice-Detector}
@@ -340,4 +426,14 @@ The proposed solution goes beyond simulation and scoring by offering a complete 
 
 \href{https://github.com/binaryshrey/Dice}{Dice Detection} by Nell Byler specializes in detecting and counting dice within images using image processing techniques~\cite{bib:nell-byler}. It focuses on accurately identifying dice face values and quantities.
 
-While this solution provides robust dice detection, the proposed system integrates this functionality within a real-time gaming context.
+This thesis extends the capabilities of existing implementations with several key innovations:
+
+\begin{itemize}
+    \item \textbf{Unified Approach}: Seamlessly integrates real-time dice detection with multiple game variants in a single application.
+    
+    \item \textbf{Adaptive AI}: Implements an intelligent opponent that learns from player behavior, unlike existing solutions that use static game logic.
+    
+    \item \textbf{Modern Architecture}: Utilizes current Android development practices with Jetpack Compose and Clean Architecture, providing better maintainability and user experience.
+    
+    \item \textbf{Real-Time Processing}: Offers immediate dice recognition and game state updates, compared to the static or delayed processing in existing solutions.
+\end{itemize}

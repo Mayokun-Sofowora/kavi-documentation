@@ -108,7 +108,6 @@ Full testing focused on critical components of the application:
     } 
     \end{lstlisting}
 
-    \item \textbf{User Interface}: Usability and responsiveness of the UI were assessed across different devices and screen sizes.
     \item \textbf{Integration Testing}: Validated the interaction of various application modules and their integration within a single system.
     \begin{lstlisting}[language=Kotlin, caption=Integration Test for Game View Model, label=lst:integration_game_view_model]
     @Test
@@ -117,6 +116,8 @@ Full testing focused on critical components of the application:
        assert(gameState.currentPlayerIndex == AI_PLAYER_ID.hashCode())
     } 
     \end{lstlisting}
+    
+    \item \textbf{User Interface}: Usability and responsiveness of the UI were assessed across different devices and screen sizes.
 \end{itemize}
 
 \subsection{Partial Testing}

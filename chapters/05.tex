@@ -25,6 +25,72 @@ As shown in Figure~\ref{fig:mvvm_explanation}, the application is structured int
     \item \textbf{Model Layer}: Represents the data and domain logic of the application. This layer contains the data entities and business rules. This layer corresponds to the "Model" component of the MVVM pattern.
 \end{itemize}
 
+\section{Use Case Modelling}
+Use cases describe how users interact with the system, illustrated using UML diagrams that visualize user interactions and the application's features.
+
+\subsubsection{Main Menu Use Case}
+Upon launching the application, users encounter the main menu, which serves as the central hub for interaction. This interface provides access to various game modes, settings, player statistics, and instructional materials, as shown in Figure~\ref{fig:main_menu_usecase}.
+
+\begin{figure}[ht!]
+    \centering
+    \includesvg[scale=0.9]{uml/render/main_menu_usecase.svg}
+    \caption{Use case diagram for the game's main menu.}
+    \label{fig:main_menu_usecase}
+\end{figure}
+
+Users can start a new game by selecting either the classic or custom game mode, allowing them to engage with predefined rules or configure their own gameplay mechanics. The statistics menu provides insights into player performance, including past game results and analysis. The settings menu enables players to configure parameters such as difficulty level, audio preferences, and visual themes. Additionally, the game rules and instructions section offers a reference for understanding mechanics and strategies. The application also integrates virtual dice recognition, enabling users to interact with real-world dice using image recognition. Table~\ref{tab:main_menu_usecase} summarizes the key interactions available in the main menu.
+
+\begin{table}[ht!]
+    \centering
+    \caption{Main Menu Use Case Interactions}
+    \label{tab:main_menu_usecase}
+    \begin{tabular}{|l|p{12cm}|}
+        \hline
+        \textbf{Actor} & \textbf{Description} \\
+        \hline
+               & \textbf{Start Game}: Initiates gameplay by selecting either classic or custom game modes. \\
+               & \textbf{Show Settings}: Provides access to customization options, including difficulty levels and interface preferences. \\
+        Player & \textbf{Show Instructions}: Displays an overview of game mechanics and rules. \\
+               & \textbf{Show Statistics}: Enables users to track their performance and game history. \\
+               & \textbf{View Player Analysis}: Provides in-depth statistics on past games, allowing players to analyze trends and optimize strategies. \\
+        \hline
+    \end{tabular}    
+\end{table}
+
+\subsubsection{Game Use Case}
+The game system encapsulates core gameplay mechanics, allowing players to engage in dice-based games in both physical and digital formats. Players roll dice, make strategic decisions, and compete against AI opponents that use heuristic probability to optimize their moves, as shown in Figure~\ref{fig:game_usecase}.
+
+\begin{figure}[ht!]
+    \centering
+    \includesvg[scale=0.7]{uml/render/game_usecase.svg}
+    \caption{Use case diagram for the game's core gameplay.}
+    \label{fig:game_usecase}
+\end{figure}
+
+\begin{table}[ht!]
+    \centering
+    \caption{Game Use Case Interactions}
+    \label{tab:game_usecase}
+    \begin{tabular}{|l|p{12cm}|}
+        \hline
+        \textbf{Actor} & \textbf{Description} \\
+        \hline
+               & \textbf{Play Classic Game}: Engage in traditional dice games with predefined rules. \\
+               & \textbf{Play Custom Game}: Define custom rules and gameplay parameters. \\
+               & \textbf{Roll Dice}: Roll dice manually or use virtual dice detection. \\
+               & \textbf{Hold Dice}: Select specific dice to keep for strategic advantage. \\
+        Player & \textbf{Bank Score}: Secure points to prevent potential losses. \\
+               & \textbf{Earn Achievements}: Unlock rewards for reaching milestones. \\
+               & \textbf{Use Virtual Mode}: Detect and capture dice roll results using image recognition. \\
+               & \textbf{Detect Dice Values}: Process dice images to identify pips and determine values. \\
+        \hline
+        AI & \textbf{Make Strategic Decisions}: Use heuristic probability to evaluate the game state and optimize moves. \\
+        \hline
+    \end{tabular}    
+\end{table}
+
+Players can roll dice using the virtual interface or capture real dice rolls via image recognition, enabling seamless integration between physical and digital gameplay. During a turn, players can choose to hold specific dice to refine their strategy or bank points to secure their score. AI opponents analyze game conditions using heuristic probability to make strategic decisions, adding challenge and unpredictability to the gameplay. Table~\ref{tab:game_usecase} outlines the primary interactions within the game system.
+
 
 \section{Methodology of Design and Implementation}
 
@@ -72,7 +138,36 @@ The dice detection model was developed using Roboflow's platform, which streamli
     \label{fig:roboflow_dataset}
 \end{figure}
 
-Roboflow facilitated data augmentation and preprocessing, which enhanced the dataset's diversity. The model training and optimization phases were crucial for achieving high accuracy, while the deployment and API integration ensured seamless real-time inference capabilities.
+The training process involved several key stages:
+
+\begin{enumerate}
+    \item \textbf{Dataset Preparation}:
+    \begin{itemize}
+        \item Collection of 250 dice images under various lighting conditions
+        \item Manual annotation of dice faces using bounding boxes
+        \item Dataset split: 80\% training, 10\% validation, 10\% testing
+    \end{itemize}
+
+    \item \textbf{Data Augmentation}:
+    \begin{itemize}
+        \item Outputs: 3 augmented versions per training example
+        \item Flip: Horizontal mirroring
+        \item Rotation: 90° clockwise and counter-clockwise, plus random rotations between -15° and +15°
+        \item Crop: Random zoom between 0\% and 2\%
+        \item Exposure: Adjustments between -10\% and +10\%
+    \end{itemize}
+
+    \item \textbf{Model Configuration}:
+    \begin{itemize}
+        \item Architecture: YOLOv8n model
+        \item Input resolution: 640x640 pixels
+        \item Classes: 6 (representing dice faces 1-6)
+    \end{itemize}
+\end{enumerate}
+
+The model achieved satisfactory performance metrics on the validation set, demonstrating reliable detection capabilities across different lighting conditions and angles. The trained model was then deployed through Roboflow's Hosted API service, enabling real-time inference with consistent response times suitable for mobile applications.
+
+The deployment process included model optimization techniques such as quantization and pruning to ensure efficient mobile performance while maintaining accuracy. This resulted in a model that could effectively detect and classify dice faces in various real-world conditions while meeting the performance requirements of a mobile application.
 
 \subsection{Project Timeline}
 
@@ -135,7 +230,6 @@ Dagger Hilt simplifies the management of dependencies by providing a standardize
 
 This section outlines the core components, modules, and classes that form the foundation of the application. It provides a summary of essential classes, detailing their roles and responsibilities.
 
-\subsection{Application Classes}
 The main classes of the application can be categorized into Main Application Classes, ViewModels, and Managers.
 \subsubsection{Main Application Classes}
 \begin{itemize}
