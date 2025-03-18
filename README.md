@@ -2,7 +2,7 @@ The Thesis PDF can be found at:
 
 📄 **`RAU-INZ-299531-2025.pdf`**
 
-## Requirements to run the file
+## Requirements to run the files
 
 ### Windows
 - Install [TeX Live](https://www.tug.org/texlive/) or [MiKTeX](https://miktex.org/)
