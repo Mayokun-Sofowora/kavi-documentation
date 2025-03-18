@@ -1,13 +1,15 @@
-# Building the Thesis Document
+The Thesis PDF can be found at:
 
-## Requirements
+📄 **`RAU-INZ-299531-2025.pdf`**
+
+## Requirements to run the file
 
 ### Windows
 - Install [TeX Live](https://www.tug.org/texlive/) or [MiKTeX](https://miktex.org/)
 - Install [Perl](https://strawberryperl.com/) (required for `bibtex` in some cases)
 - Add `pdflatex` and `bibtex` to your system's `PATH`
 
-### Linux
+### On Linux
 - Install TeX Live:
   ```bash
   sudo apt update && sudo apt install texlive-full
@@ -42,12 +44,6 @@ bibtex main
 pdflatex -shell-escape -synctex=1 main
 pdflatex -shell-escape -synctex=1 main
 ```
-
-## Viewing the Compiled Document
-
-After a successful build, the compiled PDF can be found at:
-
-📄 **`RAU-INZ-299531-2025.pdf`**
 
 ### Note
 The `pdflatex` command is run multiple times to ensure proper cross-referencing and bibliography inclusion.
